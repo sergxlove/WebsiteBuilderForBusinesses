@@ -10,6 +10,7 @@ namespace WebsiteBuilderForBusinesses.DataAccess.Postgres
             :base(options) { }
 
         public DbSet<UsersEntity> Users { get; set; }
+        public DbSet<ProjectEntity> Projects { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -19,6 +20,7 @@ namespace WebsiteBuilderForBusinesses.DataAccess.Postgres
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new UsersConfiguration());
+            modelBuilder.ApplyConfiguration(new ProjectConfiguration());
             base.OnModelCreating(modelBuilder);
         }
     }

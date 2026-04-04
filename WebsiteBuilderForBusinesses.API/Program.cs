@@ -23,6 +23,8 @@ namespace WebsiteBuilderForBusinesses.API
             builder.Services.AddScoped<IJwtProviderService,  JwtProviderService>();
             builder.Services.AddScoped<IUsersRepository, UsersRepository>();
             builder.Services.AddScoped<IUsersService, UsersService>();
+            builder.Services.AddScoped<IProjectsRepository, ProjectsRepository>();
+            builder.Services.AddScoped<IProjectsService, ProjectsService>();
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
