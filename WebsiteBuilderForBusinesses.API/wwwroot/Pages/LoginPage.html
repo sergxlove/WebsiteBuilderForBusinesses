@@ -3,195 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <link rel="stylesheet" href="../Styles/LoginPage.css">
     <title>DarkForge · Вход в конструктор сайтов</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            background: #05070c;
-            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, 'Roboto', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        /* АНИМАЦИЯ ФОНА */
-        .bg-gradient {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 20% 30%, #0a0d16, #03050a);
-            z-index: -1;
-        }
-
-        /* КАРТОЧКА ВХОДА */
-        .login-page {
-            width: 100%;
-            max-width: 460px;
-            animation: fadeInUp 0.5s ease;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .login-card {
-            background: #0f121c;
-            border-radius: 2rem;
-            padding: 2.2rem;
-            border: 1px solid #2d3448;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255,255,255,0.03);
-            backdrop-filter: blur(4px);
-        }
-
-        .logo-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .logo-icon {
-            font-size: 3.5rem;
-            filter: drop-shadow(0 4px 8px rgba(139,92,246,0.3));
-            margin-bottom: 0.5rem;
-        }
-
-        .brand-title {
-            font-size: 1.8rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #e0e7ff, #c4b5fd);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            letter-spacing: -0.5px;
-        }
-
-        /* Альтернативный безопасный стиль для заголовка (без -webkit-background-clip) */
-        @supports not (background-clip: text) {
-            .brand-title {
-                background: none;
-                color: #c4b5fd;
-                text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            }
-        }
-
-        .brand-sub {
-            font-size: 0.8rem;
-            color: #7e8aa2;
-            margin-top: 6px;
-        }
-
-        .input-group {
-            margin-bottom: 1.2rem;
-        }
-
-            .input-group label {
-                display: block;
-                color: #9ca3af;
-                font-size: 0.7rem;
-                font-weight: 600;
-                margin-bottom: 6px;
-                letter-spacing: 0.3px;
-            }
-
-            .input-group input {
-                width: 100%;
-                padding: 12px 16px;
-                background: #010101;
-                border: 1px solid #2d3445;
-                border-radius: 1rem;
-                color: #f0f3fa;
-                font-size: 0.9rem;
-                transition: all 0.2s;
-            }
-
-                .input-group input:focus {
-                    outline: none;
-                    border-color: #8b5cf6;
-                    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
-                }
-
-        .login-btn-submit {
-            width: 100%;
-            background: linear-gradient(135deg, #8b5cf6, #6d28d9);
-            border: none;
-            padding: 12px;
-            border-radius: 2rem;
-            color: white;
-            font-weight: 700;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-top: 8px;
-        }
-
-            .login-btn-submit:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
-            }
-
-        .demo-info {
-            background: #0a0d16;
-            border-radius: 1rem;
-            padding: 12px;
-            margin-top: 20px;
-            text-align: center;
-            border: 1px solid #232938;
-        }
-
-            .demo-info p {
-                color: #a5b4fc;
-                font-size: 0.7rem;
-                margin-bottom: 8px;
-            }
-
-        .demo-credentials {
-            display: flex;
-            justify-content: center;
-            gap: 16px;
-            font-size: 0.7rem;
-            font-family: monospace;
-            color: #cbd5e1;
-        }
-
-            .demo-credentials span {
-                background: #1a1f2c;
-                padding: 4px 10px;
-                border-radius: 20px;
-            }
-
-        .error-message {
-            color: #f87171;
-            font-size: 0.7rem;
-            text-align: center;
-            margin-top: 12px;
-            padding: 6px;
-            background: rgba(239, 68, 68, 0.1);
-            border-radius: 1rem;
-        }
-
-        .footer-note {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 0.65rem;
-            color: #5f6c84;
-        }
-    </style>
 </head>
 <body>
     <div class="bg-gradient"></div>
@@ -205,14 +18,19 @@
 
             <div class="input-group">
                 <label>📧 Логин / Email</label>
-                <input type="text" id="loginUsername" placeholder="admin@darkforge.com" autocomplete="off">
+                <input type="text" id="loginUsername" placeholder="Введите ваш логин" autocomplete="username">
             </div>
             <div class="input-group">
                 <label>🔒 Пароль</label>
-                <input type="password" id="loginPassword" placeholder="••••••" autocomplete="off">
+                <input type="password" id="loginPassword" placeholder="Введите пароль" autocomplete="current-password">
             </div>
 
             <button class="login-btn-submit" id="loginButton">Войти в конструктор →</button>
+
+            <div id="messageContainer"></div>
+            <div class="footer-note">
+                ⚡ Профессиональный конструктор | Тёмная тема | 40+ элементов
+            </div>
         </div>
     </div>
 
@@ -221,65 +39,112 @@
             const loginBtn = document.getElementById('loginButton');
             const usernameInput = document.getElementById('loginUsername');
             const passwordInput = document.getElementById('loginPassword');
-            const errorContainer = document.getElementById('errorContainer');
-
-            // Функция валидации и сохранения сессии
-            function attemptLogin() {
-                const username = usernameInput.value.trim();
-                const password = passwordInput.value.trim();
-
-                // Очищаем предыдущую ошибку
-                errorContainer.innerText = '';
-
-                // Простая валидация: пароль должен быть 12345, логин не пустой
-                if (password === '12345' && username.length > 0) {
-                    // Сохраняем данные пользователя в localStorage для имитации сессии
-                    const userData = {
-                        username: username,
-                        loginTime: Date.now(),
-                        isAuthenticated: true
-                    };
-                    localStorage.setItem('darkforge_auth', JSON.stringify(userData));
-                    // Перенаправляем на основную страницу конструктора
-                    window.location.href = 'builder.html';
-                } else {
-                    errorContainer.innerText = '❌ Неверный пароль. Используйте пароль: 12345';
-                    // Анимация встряски
-                    const card = document.querySelector('.login-card');
-                    card.style.transform = 'translateX(4px)';
-                    setTimeout(() => { card.style.transform = ''; }, 100);
+            const messageContainer = document.getElementById('messageContainer');
+            let isLoading = false;
+            function showMessage(text, isError = true) {
+                messageContainer.innerHTML = `
+                    <div class="${isError ? 'error-message' : 'success-message'}">
+                        ${text}
+                    </div>
+                `;
+                if (isError) {
+                    setTimeout(() => {
+                        if (messageContainer.innerHTML.includes(text)) {
+                            messageContainer.innerHTML = '';
+                        }
+                    }, 5000);
                 }
             }
+            function clearMessages() {
+                messageContainer.innerHTML = '';
+            }
+            async function attemptLogin() {
+                const username = usernameInput.value.trim();
+                const password = passwordInput.value;
+                clearMessages();
+                if (username.length === 0) {
+                    showMessage('❌ Введите логин', true);
+                    usernameInput.focus();
+                    return;
+                }
+                if (password.length === 0) {
+                    showMessage('❌ Введите пароль', true);
+                    passwordInput.focus();
+                    return;
+                }
+                if (isLoading) return;
+                isLoading = true;
+                loginBtn.disabled = true;
+                const originalBtnText = loginBtn.innerHTML;
+                loginBtn.innerHTML = '<span class="loading-spinner"></span> Вход...';
+                try {
+                    const response = await fetch('/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        credentials: 'include', 
+                        body: JSON.stringify({
+                            login: username,
+                            password: password
+                        })
+                    });
 
-            // Обработчик кнопки
+                    if (response.ok) {
+                        const userData = {
+                            username: username,
+                            loginTime: Date.now(),
+                            isAuthenticated: true
+                        };
+                        localStorage.setItem('darkforge_auth', JSON.stringify(userData));
+                        showMessage('✅ Вход выполнен успешно! Перенаправление...', false);
+                        setTimeout(() => {
+                            window.location.href = 'builder.html';
+                        }, 800);
+                    } else if (response.status === 400) {
+                        let errorText = '❌ Неверный логин или пароль';
+                        try {
+                            const errorData = await response.text();
+                            if (errorData && errorData.length > 0) {
+                                errorText = `❌ ${errorData}`;
+                            }
+                        } catch (e) {
+                        }
+                        showMessage(errorText, true);
+                        const card = document.querySelector('.login-card');
+                        card.style.transform = 'translateX(4px)';
+                        setTimeout(() => { card.style.transform = ''; }, 100);
+                    } else if (response.status === 429) {
+                        showMessage('⚠️ Слишком много попыток входа. Попробуйте позже.', true);
+                    } else if (response.status === 500) {
+                        showMessage('⚠️ Внутренняя ошибка сервера. Попробуйте позже.', true);
+                    } else {
+                        showMessage(`⚠️ Ошибка: ${response.status}. Попробуйте позже.`, true);
+                    }
+                } catch (error) {
+                    console.error('Login error:', error);
+                    let errorMsg = '⚠️ Не удалось соединиться с сервером. Проверьте подключение.';
+                    if (error.message && error.message.includes('Failed to fetch')) {
+                        errorMsg = '⚠️ Сервер недоступен. Убедитесь, что сервер запущен.';
+                    }
+                    showMessage(errorMsg, true);
+                } finally {
+                    isLoading = false;
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = originalBtnText;
+                }
+            }
             loginBtn.addEventListener('click', attemptLogin);
 
-            // Обработчик нажатия Enter
             const handleEnter = (e) => {
                 if (e.key === 'Enter') {
+                    e.preventDefault();
                     attemptLogin();
                 }
             };
             usernameInput.addEventListener('keypress', handleEnter);
             passwordInput.addEventListener('keypress', handleEnter);
-
-            // Если пользователь уже авторизован, перенаправляем на конструктор
-            const savedAuth = localStorage.getItem('darkforge_auth');
-            if (savedAuth) {
-                try {
-                    const authData = JSON.parse(savedAuth);
-                    if (authData.isAuthenticated === true && authData.username) {
-                        // Проверяем "сессию" не старше 24 часов (опционально)
-                        const hoursSince = (Date.now() - (authData.loginTime || 0)) / (1000 * 60 * 60);
-                        if (hoursSince < 24) {
-                            window.location.href = 'builder.html';
-                        } else {
-                            // Сессия устарела, очищаем
-                            localStorage.removeItem('darkforge_auth');
-                        }
-                    }
-                } catch (e) { }
-            }
         })();
     </script>
 </body>
