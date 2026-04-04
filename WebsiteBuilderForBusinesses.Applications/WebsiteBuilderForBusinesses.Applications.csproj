@@ -6,4 +6,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.17.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WebsiteBuilderForBusinesses.Core\WebsiteBuilderForBusinesses.Core.csproj" />
+    <ProjectReference Include="..\WebsiteBuilderForBusinesses.DataAccess.Postgres\WebsiteBuilderForBusinesses.DataAccess.Postgres.csproj" />
+  </ItemGroup>
+
 </Project>
