@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Новая папка1/">
+    <File Path="docker-compose.yml" />
+  </Folder>
   <Project Path="WebsiteBuilderForBusinesses.API/WebsiteBuilderForBusinesses.API.csproj" />
   <Project Path="WebsiteBuilderForBusinesses.Applications/WebsiteBuilderForBusinesses.Applications.csproj" />
   <Project Path="WebsiteBuilderForBusinesses.Core/WebsiteBuilderForBusinesses.Core.csproj" />

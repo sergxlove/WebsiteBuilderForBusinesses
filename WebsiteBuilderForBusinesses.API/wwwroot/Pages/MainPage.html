@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>DarkForge Pro · Синхронизация цвета + умные отступы</title>
+    <title>DarkForge Pro · Конструктор с контейнерами</title>
+    <!-- Подключаем SortableJS -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -28,7 +30,6 @@
             border: 1px solid #232734;
         }
 
-        /* ВЕРХНЯЯ ПАНЕЛЬ С НАЗВАНИЕМ */
         .brand-header {
             background: linear-gradient(135deg, #0a0d16 0%, #11161f 100%);
             padding: 1rem 2rem;
@@ -71,6 +72,84 @@
             border-radius: 40px;
         }
 
+        .project-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: #0a0d16;
+            padding: 8px 20px;
+            border-radius: 40px;
+            border: 1px solid #2d3448;
+        }
+
+        .project-name-display {
+            color: #e2e8f0;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .save-status {
+            font-size: 0.7rem;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+            .save-status.saved {
+                background: rgba(74, 222, 128, 0.2);
+                color: #4ade80;
+            }
+
+            .save-status.saving {
+                background: rgba(251, 191, 36, 0.2);
+                color: #fbbf24;
+            }
+
+            .save-status.error {
+                background: rgba(239, 68, 68, 0.2);
+                color: #f87171;
+            }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: #0a0d16;
+            padding: 8px 20px;
+            border-radius: 40px;
+            border: 1px solid #2d3448;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1rem;
+            text-transform: uppercase;
+        }
+
+        .user-name {
+            color: #e2e8f0;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .logout-link {
+            color: #f87171;
+            font-size: 0.75rem;
+            cursor: pointer;
+            text-decoration: underline;
+            transition: 0.2s;
+        }
+
+            .logout-link:hover {
+                color: #ff9999;
+            }
+
         .quick-bar {
             background: #0f121c;
             padding: 0.8rem 1.5rem;
@@ -86,6 +165,7 @@
             display: flex;
             gap: 0.8rem;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .tool-btn {
@@ -120,6 +200,35 @@
                 background: #ef4444;
             }
 
+                .tool-btn.warning:hover {
+                    background: #dc2626;
+                }
+
+            .tool-btn.success {
+                background: #10b981;
+            }
+
+                .tool-btn.success:hover {
+                    background: #059669;
+                }
+
+        .drag-info {
+            background: #1e2436;
+            padding: 5px 14px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            color: #a5b4fc;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+            .drag-info::before {
+                content: "⋮⋮";
+                font-size: 1rem;
+                letter-spacing: 2px;
+            }
+
         .bg-control {
             display: flex;
             align-items: center;
@@ -133,7 +242,6 @@
             font-size: 0.7rem;
             font-weight: 600;
             color: #b9c3db;
-            letter-spacing: 0.5px;
         }
 
         .color-input {
@@ -162,7 +270,7 @@
 
         .canvas {
             flex: 3;
-            min-width: 320px;
+            min-width: 500px;
             background: #080b12;
             border-radius: 1.5rem;
             padding: 1rem;
@@ -178,6 +286,77 @@
             color: #e2e8f0;
         }
 
+            /* Стили для контейнеров */
+            .site-preview .container-block {
+                border: 2px dashed #4c3a6e;
+                background: rgba(76, 58, 110, 0.1);
+                border-radius: 16px;
+                padding: 16px;
+                margin: 8px 0;
+                transition: all 0.2s;
+                min-height: 80px;
+            }
+
+                .site-preview .container-block:hover {
+                    border-color: #8b5cf6;
+                    background: rgba(139, 92, 246, 0.05);
+                }
+
+                .site-preview .container-block .container-label {
+                    font-size: 0.6rem;
+                    color: #a78bfa;
+                    margin-bottom: 8px;
+                    opacity: 0.7;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                }
+
+                    .site-preview .container-block .container-label::before {
+                        content: "📦";
+                        font-size: 0.7rem;
+                    }
+
+            .site-preview .flex-row {
+                display: flex;
+                flex-direction: row;
+                gap: 16px;
+                flex-wrap: wrap;
+                background: #131a26;
+                border-radius: 16px;
+                padding: 16px;
+                border: 1px solid #2e3a4e;
+                margin: 8px 0;
+            }
+
+            .site-preview .flex-col {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                background: #131a26;
+                border-radius: 16px;
+                padding: 16px;
+                border: 1px solid #2e3a4e;
+                margin: 8px 0;
+            }
+
+            .site-preview .dragging {
+                opacity: 0.5;
+                background: #2d3448;
+                box-shadow: 0 0 0 2px #8b5cf6;
+            }
+
+            .site-preview .sortable-drag {
+                opacity: 0.5;
+                background: #2d3448;
+            }
+
+            .site-preview .sortable-ghost {
+                opacity: 0.4;
+                background: #2d3448;
+                border: 2px dashed #8b5cf6;
+            }
+
             .site-preview .editable-element {
                 outline: 2px solid #c084fc;
                 outline-offset: 3px;
@@ -185,7 +364,14 @@
                 border-radius: 8px;
             }
 
-        /* ПАНЕЛЬ С ДВУМЯ ВКЛАДКАМИ */
+            .site-preview > * {
+                transition: transform 0.1s ease;
+            }
+
+                .site-preview > *:active {
+                    cursor: grabbing !important;
+                }
+
         .properties-panel {
             flex: 1.2;
             min-width: 340px;
@@ -240,7 +426,6 @@
                 display: block;
             }
 
-        /* Стили для свойств */
         .prop-group {
             margin-bottom: 1rem;
         }
@@ -253,7 +438,9 @@
                 margin-bottom: 5px;
             }
 
-            .prop-group input, .prop-group select, .prop-group textarea {
+            .prop-group input,
+            .prop-group select,
+            .prop-group textarea {
                 width: 100%;
                 padding: 8px 12px;
                 border-radius: 14px;
@@ -263,7 +450,6 @@
                 font-size: 0.8rem;
             }
 
-        /* Сетка для отступов */
         .spacing-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -316,7 +502,6 @@
             color: #5f6c84;
         }
 
-        /* Библиотека элементов */
         .elements-library {
             display: flex;
             flex-direction: column;
@@ -364,9 +549,78 @@
                 border-color: #a78bfa;
             }
 
-        hr {
-            margin: 12px 0;
-            border-color: #232938;
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            max-width: 350px;
+            padding: 12px 20px;
+            border-radius: 1rem;
+            font-size: 0.85rem;
+            animation: slideInRight 0.3s ease;
+        }
+
+        .toast-error {
+            background: rgba(239, 68, 68, 0.95);
+            color: white;
+        }
+
+        .toast-success {
+            background: rgba(74, 222, 128, 0.95);
+            color: #1a1f2c;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Стили для загрузки */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .loading-content {
+            text-align: center;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(139, 92, 246, 0.3);
+            border-radius: 50%;
+            border-top-color: #8b5cf6;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        .loading-text {
+            color: #e2e8f0;
+            font-size: 0.9rem;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
         }
     </style>
 </head>
@@ -375,38 +629,37 @@
         <div class="brand-header">
             <div class="logo-area">
                 <div class="logo-icon">🎨⚡</div>
-                <div class="brand-title">DarkForge Pro · Синхронизация цвета</div>
-                <div class="brand-sub">Цвет пикера = реальный цвет элемента</div>
+                <div class="brand-title">DarkForge Pro</div>
+                <div class="brand-sub">Drag & Drop · Контейнеры и вложенность</div>
             </div>
-            <div class="tool-group">
-                <div class="status-msg" id="statusMsg">🎯 Выберите элемент</div>
+            <div class="project-info">
+                <span class="project-name-display" id="projectNameSpan">Новый проект</span>
+                <span class="save-status saved" id="saveStatusSpan">● Готово</span>
+            </div>
+            <div class="user-info" id="userInfo">
+                <div class="user-avatar" id="userAvatar">?</div>
+                <span class="user-name" id="userName">Загрузка...</span>
+                <span class="logout-link" id="logoutBtn">Выйти</span>
             </div>
         </div>
 
         <div class="quick-bar">
             <div class="tool-group">
+                <div class="drag-info">⋮⋮ Зажмите и перетащите любой элемент</div>
                 <div class="bg-control">
                     <span class="bg-label">🎨 ФОН САЙТА</span>
                     <input type="color" id="bgColorPicker" class="color-input" value="#0c0f17">
                 </div>
                 <button class="tool-btn primary" id="exportHtmlBtn">💾 Экспорт HTML</button>
+                <button class="tool-btn success" id="importHtmlBtn">📂 Импорт HTML</button>
                 <button class="tool-btn warning" id="clearCanvasBtn">🗑 Очистить всё</button>
             </div>
+            <div class="status-msg" id="statusMsg">🎯 Выберите элемент</div>
         </div>
 
         <div class="workspace">
             <div class="canvas">
-                <div class="site-preview" id="sitePreview">
-                    <div style="padding: 28px; text-align: center; background: linear-gradient(135deg, #10141f, #070a10); border-radius: 32px; margin: 20px;">
-                        <h2 style="color:#e0e7ff;">⚡ Синхронизация цвета</h2>
-                        <p style="color:#b9c3db; margin: 12px 0;">Выберите элемент — цвет текста и фона в пикерах совпадают с реальными!</p>
-                        <button style="background:#8b5cf6; border:none; padding:10px 28px; border-radius: 60px;">✨ Проверить</button>
-                    </div>
-                    <div style="display: flex; gap: 16px; padding: 10px;">
-                        <div style="flex:1; background:#10151f; border-radius: 24px; padding: 18px;"><h3>🎨 Цвета синхронны</h3><p>Пикер показывает текущий цвет</p></div>
-                        <div style="flex:1; background:#10151f; border-radius: 24px; padding: 18px;"><h3>📦 Библиотека</h3><p>40+ элементов</p></div>
-                    </div>
-                </div>
+                <div class="site-preview" id="sitePreview"></div>
             </div>
 
             <div class="properties-panel">
@@ -416,37 +669,59 @@
                 </div>
                 <div class="tab-content">
                     <div class="tab-pane active-pane" id="editorPane">
-                        <div id="propContent"><div class="empty-state">⚡ Кликните на элемент сайта</div></div>
+                        <div id="propContent">
+                            <div class="empty-state">⚡ Кликните на элемент сайта</div>
+                        </div>
                         <button class="delete-btn" id="globalDeleteBtn">🗑 Удалить выбранный элемент</button>
                     </div>
                     <div class="tab-pane" id="libraryPane">
                         <div class="elements-library">
                             <div class="lib-category">
-                                <div class="lib-title">📄 Текст</div><div class="lib-grid">
-                                    <div class="element-card" data-type="h1">H1</div><div class="element-card" data-type="h2">H2</div>
-                                    <div class="element-card" data-type="h3">H3</div><div class="element-card" data-type="paragraph">Абзац</div>
+                                <div class="lib-title">📦 Контейнеры</div>
+                                <div class="lib-grid">
+                                    <div class="element-card" data-type="container" style="background:#2d1f4e;">📦 Контейнер (div)</div>
+                                    <div class="element-card" data-type="flexRow">📏 Flex ряд</div>
+                                    <div class="element-card" data-type="flexCol">📐 Flex колонка</div>
                                 </div>
                             </div>
                             <div class="lib-category">
-                                <div class="lib-title">🧩 Компоненты</div><div class="lib-grid">
-                                    <div class="element-card" data-type="button">Кнопка</div><div class="element-card" data-type="card">Карточка</div>
-                                    <div class="element-card" data-type="badge">Бейдж</div><div class="element-card" data-type="quote">Цитата</div>
+                                <div class="lib-title">📄 Текст</div>
+                                <div class="lib-grid">
+                                    <div class="element-card" data-type="h1">H1</div>
+                                    <div class="element-card" data-type="h2">H2</div>
+                                    <div class="element-card" data-type="h3">H3</div>
+                                    <div class="element-card" data-type="paragraph">Абзац</div>
+                                </div>
+                            </div>
+                            <div class="lib-category">
+                                <div class="lib-title">🧩 Компоненты</div>
+                                <div class="lib-grid">
+                                    <div class="element-card" data-type="button">Кнопка</div>
+                                    <div class="element-card" data-type="card">Карточка</div>
+                                    <div class="element-card" data-type="badge">Бейдж</div>
+                                    <div class="element-card" data-type="quote">Цитата</div>
                                     <div class="element-card" data-type="list">Список</div>
                                 </div>
                             </div>
                             <div class="lib-category">
-                                <div class="lib-title">🎨 Медиа</div><div class="lib-grid">
-                                    <div class="element-card" data-type="image">Изображение</div><div class="element-card" data-type="progress">Прогресс-бар</div>
-                                    <div class="element-card" data-type="alert">Уведомление</div><div class="element-card" data-type="grid2">Сетка 2 колонки</div>
+                                <div class="lib-title">🎨 Медиа</div>
+                                <div class="lib-grid">
+                                    <div class="element-card" data-type="image">Изображение</div>
+                                    <div class="element-card" data-type="progress">Прогресс-бар</div>
+                                    <div class="element-card" data-type="alert">Уведомление</div>
                                 </div>
                             </div>
                             <div class="lib-category">
-                                <div class="lib-title">⚙️ Динамика</div><div class="lib-grid">
-                                    <div class="element-card" data-type="input">Поле ввода</div><div class="element-card" data-type="counter">Счётчик</div>
-                                    <div class="element-card" data-type="accordion">Аккордеон</div><div class="element-card" data-type="stats">Статистика</div>
+                                <div class="lib-title">⚙️ Динамика</div>
+                                <div class="lib-grid">
+                                    <div class="element-card" data-type="input">Поле ввода</div>
+                                    <div class="element-card" data-type="counter">Счётчик</div>
+                                    <div class="element-card" data-type="accordion">Аккордеон</div>
+                                    <div class="element-card" data-type="stats">Статистика</div>
                                 </div>
                             </div>
                         </div>
+                        <p style="font-size: 10px; text-align:center; margin-top:12px; color:#5f6c84;">💡 Перетащите элемент в контейнер для вложения</p>
                     </div>
                 </div>
             </div>
@@ -454,363 +729,604 @@
     </div>
 
     <script>
-    (function() {
-        const preview = document.getElementById('sitePreview');
-        const bgPicker = document.getElementById('bgColorPicker');
-        const statusMsg = document.getElementById('statusMsg');
-        const propContentDiv = document.getElementById('propContent');
-        const deleteBtn = document.getElementById('globalDeleteBtn');
-        let selectedElement = null;
+        (function () {
+            const preview = document.getElementById('sitePreview');
+            const bgPicker = document.getElementById('bgColorPicker');
+            const statusMsg = document.getElementById('statusMsg');
+            const propContentDiv = document.getElementById('propContent');
+            const deleteBtn = document.getElementById('globalDeleteBtn');
+            const userNameSpan = document.getElementById('userName');
+            const userAvatarSpan = document.getElementById('userAvatar');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const projectNameSpan = document.getElementById('projectNameSpan');
+            const saveStatusSpan = document.getElementById('saveStatusSpan');
 
-        // Управление вкладками
-        const tabBtns = document.querySelectorAll('.tab-btn');
-        const panes = { editor: document.getElementById('editorPane'), library: document.getElementById('libraryPane') };
-        function switchTab(tabId) {
-            tabBtns.forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active-pane'));
-            if (tabId === 'editor') {
-                document.querySelector('[data-tab="editor"]').classList.add('active');
-                panes.editor.classList.add('active-pane');
-            } else {
-                document.querySelector('[data-tab="library"]').classList.add('active');
-                panes.library.classList.add('active-pane');
-            }
-        }
-        tabBtns.forEach(btn => btn.addEventListener('click', (e) => switchTab(btn.getAttribute('data-tab'))));
+            let selectedElement = null;
+            let sortableInstance = null;
+            let currentUser = null;
+            let currentProjectId = null;
+            let saveTimeout = null;
 
-        // Улучшенная функция rgb/hex с поддержкой rgba, named colors и пр.
-        function getRealColorHex(colorValue, defaultHex = '#1e1e2e') {
-            if (!colorValue || colorValue === 'rgba(0,0,0,0)' || colorValue === 'transparent') return defaultHex;
-            if (colorValue.startsWith('#')) return colorValue;
-            // пробуем распарсить rgb/rgba
-            const match = colorValue.match(/\d+/g);
-            if (match && match.length >= 3) {
-                const r = parseInt(match[0]);
-                const g = parseInt(match[1]);
-                const b = parseInt(match[2]);
-                return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+            // Получаем ID проекта из sessionStorage
+            const projectId = sessionStorage.getItem('currentProjectId');
+            const projectName = sessionStorage.getItem('currentProjectName');
+
+            function showToast(message, isError = false) {
+                const toast = document.createElement('div');
+                toast.className = `toast ${isError ? 'toast-error' : 'toast-success'}`;
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
             }
-            // fallback для named colors (редко, но на всякий случай создадим временный элемент)
-            try {
-                const temp = document.createElement('div');
-                temp.style.color = colorValue;
-                document.body.appendChild(temp);
-                const computed = getComputedStyle(temp).color;
-                document.body.removeChild(temp);
-                if (computed && computed !== 'rgba(0, 0, 0, 0)') {
-                    const rgbMatch = computed.match(/\d+/g);
-                    if (rgbMatch && rgbMatch.length >= 3) {
-                        return '#' + ((1 << 24) + (parseInt(rgbMatch[0]) << 16) + (parseInt(rgbMatch[1]) << 8) + parseInt(rgbMatch[2])).toString(16).slice(1);
+
+            function updateSaveStatus(status, text) {
+                saveStatusSpan.className = `save-status ${status}`;
+                saveStatusSpan.textContent = text;
+            }
+
+            function showLoading() {
+                const overlay = document.createElement('div');
+                overlay.id = 'loadingOverlay';
+                overlay.className = 'loading-overlay';
+                overlay.innerHTML = `
+                            <div class="loading-content">
+                                <div class="loading-spinner"></div>
+                                <div class="loading-text">Загрузка проекта...</div>
+                            </div>
+                        `;
+                document.body.appendChild(overlay);
+            }
+
+            function hideLoading() {
+                const overlay = document.getElementById('loadingOverlay');
+                if (overlay) overlay.remove();
+            }
+
+            async function saveProjectToDatabase() {
+                if (!currentProjectId) return;
+
+                const htmlToSave = preview.innerHTML;
+                updateSaveStatus('saving', '● Сохранение...');
+
+                try {
+                    const response = await fetch('/project/html/update', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        credentials: 'include',
+                        body: JSON.stringify({
+                            id: currentProjectId,
+                            name: projectNameSpan.textContent,
+                            textHtml: htmlToSave
+                        })
+                    });
+
+                    if (response.ok) {
+                        updateSaveStatus('saved', '● Сохранено');
+                        showToast('Проект сохранён', false);
+                    } else if (response.status === 400) {
+                        const errorText = await response.text();
+                        showToast(errorText || 'Ошибка сохранения', true);
+                        updateSaveStatus('error', '⚠ Ошибка');
+                    } else {
+                        throw new Error('Ошибка сохранения');
                     }
-                }
-            } catch(e) {}
-            return defaultHex;
-        }
-
-        // Парсинг отступов
-        function parseSpacingToObject(value, defaultValue = 0) {
-            if (!value || value === '0px' || value === '0') return { top: 0, right: 0, bottom: 0, left: 0 };
-            let str = value.toString();
-            let parts = str.trim().split(/\s+/);
-            let nums = [];
-            for (let p of parts) {
-                let num = parseFloat(p);
-                if (isNaN(num)) num = 0;
-                nums.push(num);
-            }
-            if (nums.length === 1) return { top: nums[0], right: nums[0], bottom: nums[0], left: nums[0] };
-            if (nums.length === 2) return { top: nums[0], right: nums[1], bottom: nums[0], left: nums[1] };
-            if (nums.length === 3) return { top: nums[0], right: nums[1], bottom: nums[2], left: nums[1] };
-            if (nums.length >= 4) return { top: nums[0], right: nums[1], bottom: nums[2], left: nums[3] };
-            return { top: defaultValue, right: defaultValue, bottom: defaultValue, left: defaultValue };
-        }
-
-        function getCurrentSpacing(element, type) {
-            const style = getComputedStyle(element);
-            let value = '';
-            if (type === 'padding') value = element.style.padding || style.padding;
-            else value = element.style.margin || style.margin;
-            return parseSpacingToObject(value);
-        }
-
-        // Обновление панели с корректной синхронизацией цветов
-        function updatePropertiesPanel() {
-            if (!selectedElement || !preview.contains(selectedElement)) {
-                if(selectedElement) selectedElement.classList.remove('editable-element');
-                selectedElement = null;
-                propContentDiv.innerHTML = `<div class="empty-state">🔍 Ничего не выбрано<br>нажмите на элемент сайта</div>`;
-                statusMsg.innerText = '💡 Кликните по элементу';
-                return;
-            }
-            selectedElement.classList.add('editable-element');
-            const tag = selectedElement.tagName.toLowerCase();
-            const isImage = tag === 'img';
-            let currentText = !isImage ? (selectedElement.innerText || '') : '';
-            let imgSrc = isImage ? selectedElement.src : '';
-
-            // ПОЛУЧАЕМ РЕАЛЬНЫЙ ЦВЕТ ТЕКСТА И ФОНА (с учётом вычисленных стилей)
-            const computedStyle = getComputedStyle(selectedElement);
-            const currentColorReal = selectedElement.style.color || computedStyle.color;
-            const currentBgReal = selectedElement.style.backgroundColor || computedStyle.backgroundColor;
-
-            const currentColorHex = getRealColorHex(currentColorReal, '#e2e8f0');
-            const currentBgHex = getRealColorHex(currentBgReal, '#0c0f17');
-
-            const currentFs = selectedElement.style.fontSize || computedStyle.fontSize;
-
-            const paddingObj = getCurrentSpacing(selectedElement, 'padding');
-            const marginObj = getCurrentSpacing(selectedElement, 'margin');
-            const currentRadius = selectedElement.style.borderRadius || computedStyle.borderRadius || '12px';
-            const currentBorder = selectedElement.style.border || computedStyle.border;
-
-            let extraHtml = '';
-            if(isImage) extraHtml = `<div class="prop-group"><label>🖼 URL изображения</label><input type="text" id="propImgSrc" value="${escapeHtml(imgSrc)}"></div>`;
-
-            propContentDiv.innerHTML = `
-                ${!isImage ? `<div class="prop-group"><label>📝 Текст / содержимое</label><input type="text" id="propText" value="${escapeHtml(currentText)}"></div>` : ''}
-                ${extraHtml}
-                <div class="prop-group">
-                    <label>🎨 Цвет текста</label>
-                    <input type="color" id="propColor" value="${currentColorHex}">
-                </div>
-                <div class="prop-group">
-                    <label>🖌 Фон элемента</label>
-                    <input type="color" id="propBgColor" value="${currentBgHex}">
-                </div>
-                <div class="prop-group"><label>📏 Размер шрифта (px)</label><input type="number" id="propFontSize" value="${parseFloat(currentFs) || 16}" step="1"></div>
-
-                <!-- ВНУТРЕННИЕ ОТСТУПЫ (PADDING) -->
-                <div class="prop-group">
-                    <label>🔲 Внутренние отступы (padding) — числа без px</label>
-                    <div class="spacing-grid">
-                        <div class="spacing-item"><label>Верх</label><input type="number" id="paddingTop" value="${paddingObj.top}" placeholder="0"></div>
-                        <div class="spacing-item"><label>Право</label><input type="number" id="paddingRight" value="${paddingObj.right}" placeholder="0"></div>
-                        <div class="spacing-item"><label>Низ</label><input type="number" id="paddingBottom" value="${paddingObj.bottom}" placeholder="0"></div>
-                        <div class="spacing-item"><label>Лево</label><input type="number" id="paddingLeft" value="${paddingObj.left}" placeholder="0"></div>
-                    </div>
-                    <div class="hint-px">✏️ px добавляется автоматически</div>
-                </div>
-
-                <!-- ВНЕШНИЕ ОТСТУПЫ (MARGIN) -->
-                <div class="prop-group">
-                    <label>🔄 Внешние отступы (margin) — числа без px</label>
-                    <div class="spacing-grid">
-                        <div class="spacing-item"><label>Верх</label><input type="number" id="marginTop" value="${marginObj.top}" placeholder="0"></div>
-                        <div class="spacing-item"><label>Право</label><input type="number" id="marginRight" value="${marginObj.right}" placeholder="0"></div>
-                        <div class="spacing-item"><label>Низ</label><input type="number" id="marginBottom" value="${marginObj.bottom}" placeholder="0"></div>
-                        <div class="spacing-item"><label>Лево</label><input type="number" id="marginLeft" value="${marginObj.left}" placeholder="0"></div>
-                    </div>
-                    <div class="hint-px">✏️ px добавляется автоматически</div>
-                </div>
-
-                <div class="prop-group"><label>⚡ Скругление (border-radius, px)</label><input type="text" id="propRadius" value="${currentRadius}"></div>
-                <div class="prop-group"><label>🖌 Граница (border)</label><input type="text" id="propBorder" value="${currentBorder !== 'none' ? currentBorder : '1px solid #2d3748'}"></div>
-                <div class="prop-group"><label>✨ Доп. CSS</label><input type="text" id="propExtra" placeholder="box-shadow: 0 8px 20px rgba(0,0,0,0.3);"></div>
-            `;
-
-            // Функции обновления отступов
-            function updatePaddingFromFields() {
-                if (!selectedElement) return;
-                const top = document.getElementById('paddingTop')?.value;
-                const right = document.getElementById('paddingRight')?.value;
-                const bottom = document.getElementById('paddingBottom')?.value;
-                const left = document.getElementById('paddingLeft')?.value;
-                if (top !== undefined) {
-                    selectedElement.style.padding = `${top || 0}px ${right || 0}px ${bottom || 0}px ${left || 0}px`;
-                }
-            }
-            function updateMarginFromFields() {
-                if (!selectedElement) return;
-                const top = document.getElementById('marginTop')?.value;
-                const right = document.getElementById('marginRight')?.value;
-                const bottom = document.getElementById('marginBottom')?.value;
-                const left = document.getElementById('marginLeft')?.value;
-                if (top !== undefined) {
-                    selectedElement.style.margin = `${top || 0}px ${right || 0}px ${bottom || 0}px ${left || 0}px`;
+                } catch (error) {
+                    console.error('Save error:', error);
+                    showToast('Не удалось сохранить проект', true);
+                    updateSaveStatus('error', '⚠ Ошибка');
                 }
             }
 
-            // Применяем обработчики
-            if (!isImage) {
-                const textInput = document.getElementById('propText');
-                if(textInput) textInput.oninput = (e) => { if(selectedElement) selectedElement.innerText = e.target.value; };
-            }
-            if(isImage) {
-                const imgInput = document.getElementById('propImgSrc');
-                if(imgInput) imgInput.oninput = (e) => { if(selectedElement) selectedElement.src = e.target.value; };
+            function handleContentChange() {
+                if (currentProjectId) {
+                    if (saveTimeout) clearTimeout(saveTimeout);
+                    updateSaveStatus('saving', '● Есть изменения');
+                    saveTimeout = setTimeout(() => {
+                        saveProjectToDatabase();
+                    }, 3000);
+                }
             }
 
-            // Цвет текста: при изменении меняем реальный цвет, и синхронизируем отображение пикера
-            const colorPicker = document.getElementById('propColor');
-            if(colorPicker) {
-                colorPicker.oninput = (e) => {
-                    if(selectedElement) {
-                        selectedElement.style.color = e.target.value;
-                        // дополнительно синхронизируем значение пикера (оно и так обновляется, но на всякий случай)
-                        colorPicker.value = e.target.value;
+            async function loadProjectFromDatabase(id, name) {
+                showLoading();
+                updateSaveStatus('saving', '● Загрузка...');
+
+                try {
+                    const response = await fetch('/project/html', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({ id: id })
+                    });
+
+                    if (response.ok) {
+                        const htmlContent = await response.text();
+                        if (htmlContent && htmlContent.trim().length > 0) {
+                            preview.innerHTML = htmlContent;
+                        } else {
+                            preview.innerHTML = getDefaultHtml();
+                        }
+                        projectNameSpan.textContent = name || `Проект ${id.substring(0, 8)}`;
+                        currentProjectId = id;
+                        updateSaveStatus('saved', '● Загружено');
+                        showToast('Проект загружен из базы данных', false);
+                    } else if (response.status === 404) {
+                        preview.innerHTML = getDefaultHtml();
+                        projectNameSpan.textContent = name || `Проект ${id.substring(0, 8)}`;
+                        currentProjectId = id;
+                        updateSaveStatus('saved', '● Новый проект');
+                        showToast('Создан новый проект', false);
+                    } else {
+                        throw new Error('Ошибка загрузки');
                     }
-                };
+                } catch (error) {
+                    console.error('Load error:', error);
+                    preview.innerHTML = getDefaultHtml();
+                    projectNameSpan.textContent = 'Ошибка загрузки';
+                    updateSaveStatus('error', '⚠ Ошибка');
+                    showToast('Не удалось загрузить проект', true);
+                } finally {
+                    hideLoading();
+                    attachGlobalEventListeners();
+                    initDragAndDrop();
+                }
             }
 
-            // Цвет фона: аналогично
-            const bgColorPickerElem = document.getElementById('propBgColor');
-            if(bgColorPickerElem) {
-                bgColorPickerElem.oninput = (e) => {
-                    if(selectedElement) {
-                        selectedElement.style.backgroundColor = e.target.value;
-                        bgColorPickerElem.value = e.target.value;
+            function getEmailFromJwt() {
+                const cookies = document.cookie.split(';');
+                let jwtToken = null;
+                for (let cookie of cookies) {
+                    const [name, value] = cookie.trim().split('=');
+                    if (name === 'jwt') {
+                        jwtToken = value;
+                        break;
                     }
-                };
+                }
+                if (!jwtToken) return null;
+                try {
+                    const parts = jwtToken.split('.');
+                    if (parts.length !== 3) return null;
+                    const payload = JSON.parse(atob(parts[1]));
+                    return payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress']
+                        || payload['email'] || payload['Email'] || payload['unique_name'] || null;
+                } catch { return null; }
             }
 
-            const fontSizeInput = document.getElementById('propFontSize');
-            if(fontSizeInput) fontSizeInput.oninput = (e) => { if(selectedElement) selectedElement.style.fontSize = e.target.value + 'px'; };
-
-            // Padding поля
-            ['paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft'].forEach(id => {
-                const el = document.getElementById(id);
-                if(el) el.addEventListener('input', updatePaddingFromFields);
-            });
-            // Margin поля
-            ['marginTop', 'marginRight', 'marginBottom', 'marginLeft'].forEach(id => {
-                const el = document.getElementById(id);
-                if(el) el.addEventListener('input', updateMarginFromFields);
-            });
-
-            const radiusInput = document.getElementById('propRadius');
-            if(radiusInput) radiusInput.oninput = (e) => { if(selectedElement) selectedElement.style.borderRadius = e.target.value; };
-
-            const borderInput = document.getElementById('propBorder');
-            if(borderInput) borderInput.oninput = (e) => { if(selectedElement) selectedElement.style.border = e.target.value; };
-
-            const extraInput = document.getElementById('propExtra');
-            if(extraInput) extraInput.oninput = (e) => { if(selectedElement) selectedElement.style.cssText += '; ' + e.target.value; };
-
-            statusMsg.innerText = `✏️ Редактируем: ${tag} | Цвета синхронизированы`;
-        }
-
-        function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m])); }
-
-        function clearSelected() {
-            if(selectedElement) selectedElement.classList.remove('editable-element');
-            selectedElement = null;
-            updatePropertiesPanel();
-        }
-
-        preview.addEventListener('click', (e) => {
-            e.stopPropagation();
-            let target = e.target;
-            if(target === preview) { clearSelected(); return; }
-            while(target && target !== preview && !target.parentElement?.classList?.contains?.('site-preview')) target = target.parentElement;
-            if(!target || target === preview) { clearSelected(); return; }
-            if(selectedElement) selectedElement.classList.remove('editable-element');
-            selectedElement = target;
-            updatePropertiesPanel();
-            switchTab('editor');
-        });
-
-        // Фабрика элементов
-        function createElementByType(type) {
-            let el;
-            switch(type) {
-                case 'h1': el = document.createElement('h1'); el.innerText = 'Заголовок H1'; el.style.fontSize = '2rem'; el.style.margin = '16px 0'; el.style.color = '#e0e7ff'; break;
-                case 'h2': el = document.createElement('h2'); el.innerText = 'Заголовок H2'; el.style.margin = '14px 0'; el.style.color = '#e2e8f0'; break;
-                case 'h3': el = document.createElement('h3'); el.innerText = 'Подзаголовок H3'; el.style.color = '#cbd5e1'; break;
-                case 'paragraph': el = document.createElement('p'); el.innerText = 'Текстовый блок. Настраивайте отступы и цвета.'; el.style.lineHeight = '1.5'; el.style.color = '#cbd5e6'; break;
-                case 'button': el = document.createElement('button'); el.innerText = 'Кнопка'; el.style.background = '#8b5cf6'; el.style.color = 'white'; el.style.padding = '10px 24px'; el.style.borderRadius = '60px'; el.style.border = 'none'; break;
-                case 'card': el = document.createElement('div'); el.innerHTML = '<strong>✨ Карточка</strong><p>Контент</p>'; el.style.background = '#111720'; el.style.padding = '20px'; el.style.borderRadius = '24px'; el.style.border = '1px solid #2e3a4e'; el.style.color = '#e2e8f0'; break;
-                case 'badge': el = document.createElement('span'); el.innerText = 'Новинка'; el.style.background = '#ef4444'; el.style.padding = '4px 12px'; el.style.borderRadius = '40px'; el.style.fontSize = '0.7rem'; el.style.color = 'white'; break;
-                case 'quote': el = document.createElement('blockquote'); el.innerText = '«Цитата с синхронизацией цвета»'; el.style.borderLeft = '4px solid #a78bfa'; el.style.padding = '12px 20px'; el.style.background = '#0f1420'; el.style.color = '#d1d5db'; break;
-                case 'list': el = document.createElement('ul'); el.innerHTML = '<li>Элемент 1</li><li>Элемент 2</li>'; el.style.paddingLeft = '24px'; el.style.color = '#cbd5e6'; break;
-                case 'image': el = document.createElement('img'); el.src = 'https://picsum.photos/id/42/300/160'; el.style.width = '100%'; el.style.borderRadius = '20px'; break;
-                case 'progress': el = document.createElement('div'); el.innerHTML = '<div style="background:#2d3748; border-radius:20px;"><div style="width:70%; background:#8b5cf6; height:8px; border-radius:20px;"></div></div><span style="color:#a0aec0;">Прогресс 70%</span>'; break;
-                case 'alert': el = document.createElement('div'); el.innerText = '⚠️ Важное уведомление'; el.style.background = '#2a2e42'; el.style.borderLeft = '4px solid #f59e0b'; el.style.padding = '12px'; el.style.borderRadius = '16px'; el.style.color = '#facc15'; break;
-                case 'grid2': el = document.createElement('div'); el.innerHTML = '<div style="display:flex; gap:16px;"><div style="flex:1; background:#131a26; padding:16px; border-radius:16px;">Колонка 1</div><div style="flex:1; background:#131a26; padding:16px; border-radius:16px;">Колонка 2</div></div>'; break;
-                case 'input': el = document.createElement('input'); el.placeholder = 'Поле ввода...'; el.style.background = '#0f121c'; el.style.padding = '10px'; el.style.borderRadius = '30px'; el.style.border = '1px solid #3b425a'; el.style.width = '100%'; el.style.color = 'white'; break;
-                case 'counter':
-                    el = document.createElement('div');
-                    el.innerHTML = '<button style="background:#2d3748; border:none; padding:4px 12px; color:white;">-</button> <span style="margin:0 12px; color:white;">0</span> <button style="background:#2d3748; border:none; padding:4px 12px; color:white;">+</button>';
-                    let span = el.querySelector('span');
-                    el.querySelectorAll('button').forEach((btn, idx) => btn.onclick = (e) => { e.stopPropagation(); let val = parseInt(span.innerText); span.innerText = idx === 0 ? val-1 : val+1; });
-                    break;
-                case 'accordion':
-                    el = document.createElement('div');
-                    el.innerHTML = '<div style="background:#181e2c; padding:12px; cursor:pointer; color:white;">📁 Аккордеон</div><div style="padding:12px; color:#cbd5e6;">Скрытый контент</div>';
-                    const header = el.firstChild;
-                    const content = el.lastChild;
-                    header.onclick = (e) => { e.stopPropagation(); content.style.display = content.style.display === 'none' ? 'block' : 'none'; };
-                    content.style.display = 'block';
-                    break;
-                case 'stats': el = document.createElement('div'); el.innerHTML = '<div style="display:flex;"><div style="flex:1"><h3 style="color:#a78bfa;">150+</h3><p style="color:#94a3b8;">проектов</p></div><div style="flex:1"><h3 style="color:#a78bfa;">24/7</h3><p style="color:#94a3b8;">поддержка</p></div></div>'; el.style.background = '#0f1420'; el.style.padding = '16px'; el.style.borderRadius = '28px'; break;
-                default: return null;
+            function loadUserInfo() {
+                const email = getEmailFromJwt();
+                if (email) {
+                    currentUser = email;
+                    userNameSpan.textContent = currentUser;
+                    userAvatarSpan.textContent = currentUser.charAt(0).toUpperCase();
+                } else {
+                    userNameSpan.textContent = 'Гость';
+                    userAvatarSpan.textContent = '?';
+                }
             }
-            if(el && !el.style.cursor) el.style.cursor = 'pointer';
-            return el;
-        }
 
-        function addElementToSite(type) {
-            const newEl = createElementByType(type);
-            if(!newEl) return;
-            preview.appendChild(newEl);
-            if(selectedElement) selectedElement.classList.remove('editable-element');
-            selectedElement = newEl;
-            updatePropertiesPanel();
-            newEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            statusMsg.innerText = `➕ Добавлен: ${type}`;
-            switchTab('editor');
-        }
+            async function logout() {
+                if (!confirm('Вы уверены, что хотите выйти?')) return;
+                try {
+                    const response = await fetch('/logout', { method: 'GET', credentials: 'include' });
+                    if (response.ok) {
+                        showToast('Выход выполнен успешно', false);
+                        setTimeout(() => loadUserInfo(), 500);
+                    } else {
+                        showToast('Ошибка при выходе', true);
+                    }
+                } catch { showToast('Не удалось выполнить выход', true); }
+            }
 
-        function deleteSelectedElem() {
-            if(selectedElement && preview.contains(selectedElement)) {
-                const toDel = selectedElement;
-                clearSelected();
-                toDel.remove();
-                statusMsg.innerText = '🗑 Элемент удалён';
+            function getDefaultHtml() {
+                return `
+                            <div style="padding: 28px; text-align: center; background: linear-gradient(135deg, #10141f, #070a10); border-radius: 32px; margin: 20px;">
+                                <h2 style="color:#e0e7ff;">⚡ DarkForge Pro с контейнерами</h2>
+                                <p style="color:#b9c3db; margin: 12px 0;">🎯 Добавьте контейнер и перетащите в него элементы!</p>
+                                <button style="background:#8b5cf6; border:none; padding:10px 28px; border-radius: 60px;">✨ Попробуй</button>
+                            </div>
+                            <div style="display: flex; gap: 16px; padding: 10px;">
+                                <div style="flex:1; background:#10151f; border-radius: 24px; padding: 18px;">
+                                    <h3>📦 Контейнеры</h3>
+                                    <p>Добавляйте блоки и вкладывайте элементы</p>
+                                </div>
+                                <div style="flex:1; background:#10151f; border-radius: 24px; padding: 18px;">
+                                    <h3>🎨 Перетаскивание</h3>
+                                    <p>Элементы можно перемещать внутри контейнеров</p>
+                                </div>
+                            </div>
+                        `;
+            }
+
+            function initDragAndDrop() {
+                if (sortableInstance) sortableInstance.destroy();
+
+                const containers = [preview, ...preview.querySelectorAll('.container-block, .flex-row, .flex-col, .card')];
+
+                containers.forEach(container => {
+                    if (container === preview || container.classList?.contains('container-block') ||
+                        container.classList?.contains('flex-row') || container.classList?.contains('flex-col') ||
+                        container.classList?.contains('card')) {
+
+                        new Sortable(container, {
+                            group: 'shared',
+                            animation: 350,
+                            ghostClass: 'sortable-ghost',
+                            dragClass: 'sortable-drag',
+                            handle: '*',
+                            onEnd: function () {
+                                attachGlobalEventListeners();
+                                initDragAndDrop();
+                                handleContentChange();
+                            },
+                            scroll: true,
+                            scrollSensitivity: 30,
+                            scrollSpeed: 10,
+                            supportPointer: true
+                        });
+                    }
+                });
+            }
+
+            function attachGlobalEventListeners() {
+                const allElements = preview.querySelectorAll('*');
+                allElements.forEach(el => {
+                    el.removeEventListener('click', handleElementClick);
+                    el.addEventListener('click', handleElementClick);
+                    if (!el.classList?.contains('container-label')) {
+                        el.style.cursor = 'grab';
+                    }
+                });
+            }
+
+            function handleElementClick(e) {
+                e.stopPropagation();
+                if (selectedElement) selectedElement.classList.remove('editable-element');
+                selectedElement = e.target;
+                if (selectedElement.classList?.contains('container-label')) {
+                    selectedElement = selectedElement.parentElement;
+                }
+                selectedElement.classList.add('editable-element');
                 updatePropertiesPanel();
-            } else statusMsg.innerText = '⚠️ Ничего не выбрано';
-        }
-
-        function clearCanvas() {
-            if(confirm('Очистить всё?')) {
-                preview.innerHTML = `<div style="padding: 28px; text-align: center; background: linear-gradient(135deg, #10141f, #070a10); border-radius: 32px; margin: 20px;">
-                    <h2 style="color:#e0e7ff;">⚡ Синхронизация цвета</h2>
-                    <p style="color:#b9c3db;">Цвет текста и фона в пикерах = реальный цвет элемента!</p>
-                    <button style="background:#8b5cf6; border:none; padding:10px 28px; border-radius: 60px;">✨ Проверить</button>
-                </div><div style="display: flex; gap: 16px; padding: 10px;"><div style="flex:1; background:#10151f; border-radius: 24px; padding: 18px;"><h3>🎨 Цвета синхронны</h3><p>Пикер показывает текущий цвет</p></div>
-                <div style="flex:1; background:#10151f; border-radius: 24px; padding: 18px;"><h3>📦 Библиотека</h3><p>40+ элементов</p></div></div>`;
-                clearSelected();
+                switchTab('editor');
             }
-        }
 
-        function exportFullHTML() {
-            const clone = preview.cloneNode(true);
-            clone.querySelectorAll('.editable-element').forEach(el => el.classList.remove('editable-element'));
-            const inner = clone.innerHTML;
-            const bgColor = bgPicker.value;
-            const doc = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DarkForge Site</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{background:${bgColor};font-family:system-ui;padding:2rem;}.container{max-width:1200px;margin:0 auto;background:#0c0f17;border-radius:32px;padding:24px;color:#e2e8f0;}</style></head><body><div class="container">${inner}</div><script>document.querySelectorAll('button').forEach(btn=>{if(!btn.hasAttribute('data-clk')){btn.setAttribute('data-clk','true');btn.addEventListener('click',()=>alert('Кнопка: '+btn.innerText));}});<\/script></body></html>`;
-            const blob = new Blob([doc], {type: 'text/html'});
-            const a = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            a.href = url; a.download = 'darkforge_sync.html';
-            document.body.appendChild(a); a.click(); document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            statusMsg.innerText = '✅ Экспорт готов!';
-        }
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const panes = { editor: document.getElementById('editorPane'), library: document.getElementById('libraryPane') };
+            function switchTab(tabId) {
+                tabBtns.forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active-pane'));
+                if (tabId === 'editor') {
+                    document.querySelector('[data-tab="editor"]').classList.add('active');
+                    panes.editor.classList.add('active-pane');
+                } else {
+                    document.querySelector('[data-tab="library"]').classList.add('active');
+                    panes.library.classList.add('active-pane');
+                }
+            }
+            tabBtns.forEach(btn => btn.addEventListener('click', (e) => switchTab(btn.getAttribute('data-tab'))));
 
-        document.querySelectorAll('.element-card').forEach(card => card.addEventListener('click', (e) => { e.stopPropagation(); addElementToSite(card.getAttribute('data-type')); }));
-        document.getElementById('exportHtmlBtn').addEventListener('click', exportFullHTML);
-        document.getElementById('clearCanvasBtn').addEventListener('click', clearCanvas);
-        deleteBtn.addEventListener('click', deleteSelectedElem);
-        bgPicker.addEventListener('input', (e) => preview.style.backgroundColor = e.target.value);
-        preview.style.backgroundColor = bgPicker.value;
+            function getRealColorHex(colorValue, defaultHex = '#1e1e2e') {
+                if (!colorValue || colorValue === 'rgba(0,0,0,0)' || colorValue === 'transparent') return defaultHex;
+                if (colorValue.startsWith('#')) return colorValue;
+                const match = colorValue.match(/\d+/g);
+                if (match && match.length >= 3) {
+                    return '#' + ((1 << 24) + (parseInt(match[0]) << 16) + (parseInt(match[1]) << 8) + parseInt(match[2])).toString(16).slice(1);
+                }
+                return defaultHex;
+            }
 
-        const observer = new MutationObserver(() => {
-            preview.querySelectorAll('button').forEach(btn => { if(!btn.hasAttribute('data-safe')) { btn.setAttribute('data-safe','true'); btn.onclick = (e) => e.stopPropagation(); } });
-        });
-        observer.observe(preview, { childList: true, subtree: true });
-        clearSelected();
-        switchTab('editor');
-    })();
+            function parseSpacingToObject(value, defaultValue = 0) {
+                if (!value || value === '0px' || value === '0') return { top: 0, right: 0, bottom: 0, left: 0 };
+                let parts = value.toString().trim().split(/\s+/);
+                let nums = parts.map(p => parseFloat(p) || 0);
+                if (nums.length === 1) return { top: nums[0], right: nums[0], bottom: nums[0], left: nums[0] };
+                if (nums.length === 2) return { top: nums[0], right: nums[1], bottom: nums[0], left: nums[1] };
+                if (nums.length === 3) return { top: nums[0], right: nums[1], bottom: nums[2], left: nums[1] };
+                return { top: nums[0], right: nums[1], bottom: nums[2], left: nums[3] };
+            }
+
+            function getCurrentSpacing(element, type) {
+                const style = getComputedStyle(element);
+                let value = type === 'padding' ? (element.style.padding || style.padding) : (element.style.margin || style.margin);
+                return parseSpacingToObject(value);
+            }
+
+            function escapeHtml(str) {
+                if (!str) return '';
+                return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m]));
+            }
+
+            function updatePropertiesPanel() {
+                if (!selectedElement || !preview.contains(selectedElement)) {
+                    if (selectedElement) selectedElement.classList.remove('editable-element');
+                    selectedElement = null;
+                    propContentDiv.innerHTML = `<div class="empty-state">🔍 Ничего не выбрано<br>нажмите на элемент сайта</div>`;
+                    statusMsg.innerText = '💡 Кликните по элементу';
+                    return;
+                }
+                selectedElement.classList.add('editable-element');
+                const tag = selectedElement.tagName.toLowerCase();
+                const isImage = tag === 'img';
+                let currentText = !isImage ? (selectedElement.innerText || '') : '';
+                let imgSrc = isImage ? selectedElement.src : '';
+
+                const computedStyle = getComputedStyle(selectedElement);
+                const currentColorHex = getRealColorHex(selectedElement.style.color || computedStyle.color, '#e2e8f0');
+                const currentBgHex = getRealColorHex(selectedElement.style.backgroundColor || computedStyle.backgroundColor, '#0c0f17');
+                const currentFs = selectedElement.style.fontSize || computedStyle.fontSize;
+                const paddingObj = getCurrentSpacing(selectedElement, 'padding');
+                const marginObj = getCurrentSpacing(selectedElement, 'margin');
+                const currentRadius = selectedElement.style.borderRadius || computedStyle.borderRadius || '12px';
+                const currentBorder = selectedElement.style.border || computedStyle.border;
+
+                let extraHtml = '';
+                if (isImage) extraHtml = `<div class="prop-group"><label>🖼 URL изображения</label><input type="text" id="propImgSrc" value="${escapeHtml(imgSrc)}"></div>`;
+
+                propContentDiv.innerHTML = `
+                            ${!isImage ? `<div class="prop-group"><label>📝 Текст / содержимое</label><input type="text" id="propText" value="${escapeHtml(currentText)}"></div>` : ''}
+                            ${extraHtml}
+                            <div class="prop-group"><label>🎨 Цвет текста</label><input type="color" id="propColor" value="${currentColorHex}"></div>
+                            <div class="prop-group"><label>🖌 Фон элемента</label><input type="color" id="propBgColor" value="${currentBgHex}"></div>
+                            <div class="prop-group"><label>📏 Размер шрифта (px)</label><input type="number" id="propFontSize" value="${parseFloat(currentFs) || 16}" step="1"></div>
+                            <div class="prop-group"><label>🔲 Внутренние отступы (padding)</label>
+                                <div class="spacing-grid">
+                                    <div class="spacing-item"><label>Верх</label><input type="number" id="paddingTop" value="${paddingObj.top}"></div>
+                                    <div class="spacing-item"><label>Право</label><input type="number" id="paddingRight" value="${paddingObj.right}"></div>
+                                    <div class="spacing-item"><label>Низ</label><input type="number" id="paddingBottom" value="${paddingObj.bottom}"></div>
+                                    <div class="spacing-item"><label>Лево</label><input type="number" id="paddingLeft" value="${paddingObj.left}"></div>
+                                </div>
+                                <div class="hint-px">✏️ px добавляется автоматически</div>
+                            </div>
+                            <div class="prop-group"><label>🔄 Внешние отступы (margin)</label>
+                                <div class="spacing-grid">
+                                    <div class="spacing-item"><label>Верх</label><input type="number" id="marginTop" value="${marginObj.top}"></div>
+                                    <div class="spacing-item"><label>Право</label><input type="number" id="marginRight" value="${marginObj.right}"></div>
+                                    <div class="spacing-item"><label>Низ</label><input type="number" id="marginBottom" value="${marginObj.bottom}"></div>
+                                    <div class="spacing-item"><label>Лево</label><input type="number" id="marginLeft" value="${marginObj.left}"></div>
+                                </div>
+                                <div class="hint-px">✏️ px добавляется автоматически</div>
+                            </div>
+                            <div class="prop-group"><label>⚡ Скругление</label><input type="text" id="propRadius" value="${currentRadius}"></div>
+                            <div class="prop-group"><label>🖌 Граница</label><input type="text" id="propBorder" value="${currentBorder !== 'none' ? currentBorder : '1px solid #2d3748'}"></div>
+                            <div class="prop-group"><label>✨ Доп. CSS</label><input type="text" id="propExtra" placeholder="box-shadow: 0 8px 20px rgba(0,0,0,0.3);"></div>
+                        `;
+
+                function updatePadding() {
+                    if (!selectedElement) return;
+                    selectedElement.style.padding = `${document.getElementById('paddingTop')?.value || 0}px ${document.getElementById('paddingRight')?.value || 0}px ${document.getElementById('paddingBottom')?.value || 0}px ${document.getElementById('paddingLeft')?.value || 0}px`;
+                    handleContentChange();
+                }
+                function updateMargin() {
+                    if (!selectedElement) return;
+                    selectedElement.style.margin = `${document.getElementById('marginTop')?.value || 0}px ${document.getElementById('marginRight')?.value || 0}px ${document.getElementById('marginBottom')?.value || 0}px ${document.getElementById('marginLeft')?.value || 0}px`;
+                    handleContentChange();
+                }
+
+                if (!isImage) document.getElementById('propText')?.addEventListener('input', e => { if (selectedElement) { selectedElement.innerText = e.target.value; handleContentChange(); } });
+                if (isImage) document.getElementById('propImgSrc')?.addEventListener('input', e => { if (selectedElement) { selectedElement.src = e.target.value; handleContentChange(); } });
+                document.getElementById('propColor')?.addEventListener('input', e => { if (selectedElement) { selectedElement.style.color = e.target.value; handleContentChange(); } });
+                document.getElementById('propBgColor')?.addEventListener('input', e => { if (selectedElement) { selectedElement.style.backgroundColor = e.target.value; handleContentChange(); } });
+                document.getElementById('propFontSize')?.addEventListener('input', e => { if (selectedElement) { selectedElement.style.fontSize = e.target.value + 'px'; handleContentChange(); } });
+                ['paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft'].forEach(id => document.getElementById(id)?.addEventListener('input', updatePadding));
+                ['marginTop', 'marginRight', 'marginBottom', 'marginLeft'].forEach(id => document.getElementById(id)?.addEventListener('input', updateMargin));
+                document.getElementById('propRadius')?.addEventListener('input', e => { if (selectedElement) { selectedElement.style.borderRadius = e.target.value; handleContentChange(); } });
+                document.getElementById('propBorder')?.addEventListener('input', e => { if (selectedElement) { selectedElement.style.border = e.target.value; handleContentChange(); } });
+                document.getElementById('propExtra')?.addEventListener('input', e => { if (selectedElement) { selectedElement.style.cssText += '; ' + e.target.value; handleContentChange(); } });
+
+                statusMsg.innerText = `✏️ Редактируем: ${tag}`;
+            }
+
+            function clearSelected() {
+                if (selectedElement) selectedElement.classList.remove('editable-element');
+                selectedElement = null;
+                updatePropertiesPanel();
+            }
+
+            function createElementByType(type) {
+                let el;
+                switch (type) {
+                    case 'container':
+                        el = document.createElement('div');
+                        el.className = 'container-block';
+                        el.innerHTML = `<div class="container-label">Контейнер (перетащите сюда элементы)</div>`;
+                        el.style.minHeight = '100px';
+                        break;
+                    case 'flexRow':
+                        el = document.createElement('div');
+                        el.className = 'flex-row';
+                        el.style.display = 'flex';
+                        el.style.flexDirection = 'row';
+                        el.style.gap = '16px';
+                        el.style.flexWrap = 'wrap';
+                        el.style.background = '#131a26';
+                        el.style.borderRadius = '16px';
+                        el.style.padding = '16px';
+                        el.style.border = '1px solid #2e3a4e';
+                        el.innerHTML = `<div class="container-label" style="margin-bottom:8px;">📏 Flex ряд (горизонтальный)</div>`;
+                        break;
+                    case 'flexCol':
+                        el = document.createElement('div');
+                        el.className = 'flex-col';
+                        el.style.display = 'flex';
+                        el.style.flexDirection = 'column';
+                        el.style.gap = '12px';
+                        el.style.background = '#131a26';
+                        el.style.borderRadius = '16px';
+                        el.style.padding = '16px';
+                        el.style.border = '1px solid #2e3a4e';
+                        el.innerHTML = `<div class="container-label" style="margin-bottom:8px;">📐 Flex колонка (вертикальный)</div>`;
+                        break;
+                    case 'h1': el = document.createElement('h1'); el.innerText = 'Заголовок H1'; el.style.fontSize = '2rem'; el.style.margin = '16px 0'; el.style.color = '#e0e7ff'; break;
+                    case 'h2': el = document.createElement('h2'); el.innerText = 'Заголовок H2'; el.style.margin = '14px 0'; el.style.color = '#e2e8f0'; break;
+                    case 'h3': el = document.createElement('h3'); el.innerText = 'Подзаголовок H3'; el.style.color = '#cbd5e1'; break;
+                    case 'paragraph': el = document.createElement('p'); el.innerText = 'Текстовый блок. Настраивайте отступы и цвета.'; el.style.lineHeight = '1.5'; el.style.color = '#cbd5e6'; break;
+                    case 'button': el = document.createElement('button'); el.innerText = 'Кнопка'; el.style.background = '#8b5cf6'; el.style.color = 'white'; el.style.padding = '10px 24px'; el.style.borderRadius = '60px'; el.style.border = 'none'; break;
+                    case 'card': el = document.createElement('div'); el.innerHTML = '<strong>✨ Карточка</strong><p>Контент</p>'; el.style.background = '#111720'; el.style.padding = '20px'; el.style.borderRadius = '24px'; el.style.border = '1px solid #2e3a4e'; el.style.color = '#e2e8f0'; break;
+                    case 'badge': el = document.createElement('span'); el.innerText = 'Новинка'; el.style.background = '#ef4444'; el.style.padding = '4px 12px'; el.style.borderRadius = '40px'; el.style.fontSize = '0.7rem'; el.style.color = 'white'; break;
+                    case 'quote': el = document.createElement('blockquote'); el.innerText = '«Цитата»'; el.style.borderLeft = '4px solid #a78bfa'; el.style.padding = '12px 20px'; el.style.background = '#0f1420'; el.style.color = '#d1d5db'; break;
+                    case 'list': el = document.createElement('ul'); el.innerHTML = '<li>Элемент 1</li><li>Элемент 2</li>'; el.style.paddingLeft = '24px'; el.style.color = '#cbd5e6'; break;
+                    case 'image': el = document.createElement('img'); el.src = 'https://picsum.photos/id/42/300/160'; el.style.width = '100%'; el.style.borderRadius = '20px'; break;
+                    case 'progress': el = document.createElement('div'); el.innerHTML = '<div style="background:#2d3748; border-radius:20px;"><div style="width:70%; background:#8b5cf6; height:8px; border-radius:20px;"></div></div><span style="color:#a0aec0;">Прогресс 70%</span>'; break;
+                    case 'alert': el = document.createElement('div'); el.innerText = '⚠️ Важное уведомление'; el.style.background = '#2a2e42'; el.style.borderLeft = '4px solid #f59e0b'; el.style.padding = '12px'; el.style.borderRadius = '16px'; el.style.color = '#facc15'; break;
+                    case 'input': el = document.createElement('input'); el.placeholder = 'Поле ввода...'; el.style.background = '#0f121c'; el.style.padding = '10px'; el.style.borderRadius = '30px'; el.style.border = '1px solid #3b425a'; el.style.width = '100%'; el.style.color = 'white'; break;
+                    case 'counter':
+                        el = document.createElement('div');
+                        el.innerHTML = '<button style="background:#2d3748; border:none; padding:4px 12px; color:white;">-</button> <span style="margin:0 12px; color:white;">0</span> <button style="background:#2d3748; border:none; padding:4px 12px; color:white;">+</button>';
+                        let span = el.querySelector('span');
+                        el.querySelectorAll('button').forEach((btn, idx) => btn.onclick = (e) => { e.stopPropagation(); let val = parseInt(span.innerText); span.innerText = idx === 0 ? val - 1 : val + 1; });
+                        break;
+                    case 'accordion':
+                        el = document.createElement('div');
+                        el.innerHTML = '<div style="background:#181e2c; padding:12px; cursor:pointer; color:white;">📁 Аккордеон</div><div style="padding:12px; color:#cbd5e6;">Скрытый контент</div>';
+                        const header = el.firstChild;
+                        const content = el.lastChild;
+                        header.onclick = (e) => { e.stopPropagation(); content.style.display = content.style.display === 'none' ? 'block' : 'none'; };
+                        content.style.display = 'block';
+                        break;
+                    case 'stats': el = document.createElement('div'); el.innerHTML = '<div style="display:flex;"><div style="flex:1"><h3 style="color:#a78bfa;">150+</h3><p style="color:#94a3b8;">проектов</p></div><div style="flex:1"><h3 style="color:#a78bfa;">24/7</h3><p style="color:#94a3b8;">поддержка</p></div></div>'; el.style.background = '#0f1420'; el.style.padding = '16px'; el.style.borderRadius = '28px'; break;
+                    default: return null;
+                }
+                if (el && !el.style.cursor && !el.classList?.contains('container-label')) el.style.cursor = 'grab';
+                return el;
+            }
+
+            function addElementToSite(type) {
+                const newEl = createElementByType(type);
+                if (!newEl) return;
+                preview.appendChild(newEl);
+                if (selectedElement) selectedElement.classList.remove('editable-element');
+                selectedElement = newEl;
+                updatePropertiesPanel();
+                newEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                statusMsg.innerText = `➕ Добавлен: ${type}`;
+                switchTab('editor');
+                attachGlobalEventListeners();
+                initDragAndDrop();
+                handleContentChange();
+            }
+
+            function deleteSelectedElem() {
+                if (selectedElement && preview.contains(selectedElement)) {
+                    const toDel = selectedElement;
+                    clearSelected();
+                    toDel.remove();
+                    statusMsg.innerText = '🗑 Элемент удалён';
+                    updatePropertiesPanel();
+                    showToast('Элемент удалён', false);
+                    attachGlobalEventListeners();
+                    initDragAndDrop();
+                    handleContentChange();
+                } else {
+                    showToast('⚠️ Ничего не выбрано', true);
+                }
+            }
+
+            function clearCanvas() {
+                if (confirm('Очистить всё?')) {
+                    preview.innerHTML = getDefaultHtml();
+                    clearSelected();
+                    attachGlobalEventListeners();
+                    initDragAndDrop();
+                    handleContentChange();
+                    showToast('Холст очищен', false);
+                }
+            }
+
+            function exportFullHTML() {
+                const clone = preview.cloneNode(true);
+                clone.querySelectorAll('.editable-element').forEach(el => el.classList.remove('editable-element'));
+                const inner = clone.innerHTML;
+                const bgColor = bgPicker.value;
+                const scriptOpen = '<' + 'script>';
+                const scriptClose = '<' + '/script>';
+
+                const doc = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DarkForge Site</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{background:${bgColor};font-family:system-ui;padding:2rem;}.container{max-width:1200px;margin:0 auto;background:#0c0f17;border-radius:32px;padding:24px;color:#e2e8f0;}</style></head><body><div class="container">${inner}</div>${scriptOpen}document.querySelectorAll('button').forEach(btn=>{if(!btn.hasAttribute('data-clk')){btn.setAttribute('data-clk','true');btn.addEventListener('click',()=>alert('Кнопка: '+btn.innerText));});${scriptClose}</body></html>`;
+
+                const blob = new Blob([doc], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'darkforge_export.html';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showToast('✅ HTML экспортирован', false);
+            }
+
+            function importHTML() {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.html,.htm';
+                input.onchange = (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        let importedHtml = event.target.result;
+                        const bodyMatch = importedHtml.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+                        if (bodyMatch && bodyMatch[1]) importedHtml = bodyMatch[1];
+                        else {
+                            const containerMatch = importedHtml.match(/<div[^>]*class="container"[^>]*>([\s\S]*?)<\/div>/i);
+                            if (containerMatch && containerMatch[1]) importedHtml = containerMatch[1];
+                        }
+                        preview.innerHTML = '';
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = importedHtml;
+                        while (tempDiv.firstChild) preview.appendChild(tempDiv.firstChild);
+                        clearSelected();
+                        attachGlobalEventListeners();
+                        initDragAndDrop();
+                        handleContentChange();
+                        showToast('✅ HTML импортирован', false);
+                    };
+                    reader.onerror = () => showToast('❌ Ошибка чтения файла', true);
+                    reader.readAsText(file);
+                };
+                input.click();
+            }
+
+            // Наблюдатель за изменениями в preview
+            const observer = new MutationObserver(() => {
+                handleContentChange();
+            });
+            observer.observe(preview, { childList: true, subtree: true, attributes: true });
+
+            document.querySelectorAll('.element-card').forEach(card => card.addEventListener('click', (e) => {
+                e.stopPropagation();
+                addElementToSite(card.getAttribute('data-type'));
+            }));
+
+            document.getElementById('exportHtmlBtn').addEventListener('click', exportFullHTML);
+            document.getElementById('importHtmlBtn').addEventListener('click', importHTML);
+            document.getElementById('clearCanvasBtn').addEventListener('click', clearCanvas);
+            deleteBtn.addEventListener('click', deleteSelectedElem);
+            bgPicker.addEventListener('input', (e) => preview.style.backgroundColor = e.target.value);
+            logoutBtn.addEventListener('click', logout);
+
+            loadUserInfo();
+
+            // Загружаем проект если есть ID, иначе создаём новый
+            if (projectId && projectId !== 'null' && projectId !== 'undefined') {
+                loadProjectFromDatabase(projectId, projectName);
+                // Очищаем хранилище после загрузки
+                sessionStorage.removeItem('currentProjectId');
+                sessionStorage.removeItem('currentProjectName');
+            } else {
+                preview.innerHTML = getDefaultHtml();
+                projectNameSpan.textContent = 'Новый проект';
+                updateSaveStatus('saved', '● Новый проект');
+            }
+
+            preview.style.backgroundColor = bgPicker.value;
+            attachGlobalEventListeners();
+            initDragAndDrop();
+            clearSelected();
+            switchTab('editor');
+        })();
     </script>
 </body>
 </html>
