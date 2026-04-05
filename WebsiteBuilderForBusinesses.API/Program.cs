@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -7,6 +8,8 @@ using System.Threading.RateLimiting;
 using WebsiteBuilderForBusinesses.API.Extensions;
 using WebsiteBuilderForBusinesses.Applications.Abstractions;
 using WebsiteBuilderForBusinesses.Applications.Services;
+using WebsiteBuilderForBusinesses.Core.Abstractions;
+using WebsiteBuilderForBusinesses.Core.Services;
 using WebsiteBuilderForBusinesses.DataAccess.Postgres;
 using WebsiteBuilderForBusinesses.DataAccess.Postgres.Abstractions;
 using WebsiteBuilderForBusinesses.DataAccess.Postgres.Repositories;
@@ -20,6 +23,7 @@ namespace WebsiteBuilderForBusinesses.API
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddDbContext<WebBuilderDbContext>(options =>
                 options.UseNpgsql("Host=localhost;Port=5432;Database=db;Username=postgres;Password=123"));
+            builder.Services.AddScoped<IPasswordHasherService, PasswordHasherService>();
             builder.Services.AddScoped<IJwtProviderService,  JwtProviderService>();
             builder.Services.AddScoped<IUsersRepository, UsersRepository>();
             builder.Services.AddScoped<IUsersService, UsersService>();

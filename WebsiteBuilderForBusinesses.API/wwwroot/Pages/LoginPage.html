@@ -95,7 +95,7 @@
                         localStorage.setItem('darkforge_auth', JSON.stringify(userData));
                         showMessage('✅ Вход выполнен успешно! Перенаправление...', false);
                         setTimeout(() => {
-                            window.location.href = 'builder.html';
+                            window.location.href = '/page/projects';
                         }, 800);
                     } else if (response.status === 400) {
                         let errorText = '❌ Неверный логин или пароль';

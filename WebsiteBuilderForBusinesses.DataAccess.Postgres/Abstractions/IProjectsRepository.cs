@@ -11,5 +11,6 @@ namespace WebsiteBuilderForBusinesses.DataAccess.Postgres.Abstractions
         Task<List<ShortProject>> GetAllAsync(CancellationToken token);
         Task<string> GetHtmlByIdAsync(Guid id, CancellationToken token);
         Task<int> UpdateHtmlAsync(Projects project, CancellationToken token);
+        Task<int> UpdateNameAsync(string oldName, string newName, CancellationToken token);
     }
 }
