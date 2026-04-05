@@ -319,7 +319,9 @@
             function openProject(projectId) {
                 const project = projects.find(p => p.id === projectId);
                 if (project) {
-                    window.location.href = `builder.html?projectId=${projectId}`;
+                    sessionStorage.setItem('currentProjectId', projectId);
+                    sessionStorage.setItem('currentProjectName', project.name);
+                    window.location.href = '/index';
                 }
             }
             function showRenameProjectModal(projectId, currentName) {
