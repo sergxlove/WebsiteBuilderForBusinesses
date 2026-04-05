@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WebsiteBuilderForBusinesses.API.Requests;
 using WebsiteBuilderForBusinesses.Applications.Abstractions;
+using WebsiteBuilderForBusinesses.Core.Infrastructures;
+using WebsiteBuilderForBusinesses.Core.Models;
 
 namespace WebsiteBuilderForBusinesses.API.Endpoints
 {
@@ -19,6 +22,83 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                 {
                     return Results.InternalServerError();
                 }
+            });
+
+            app.MapPost("/project/html", async (HttpContext context,
+                [FromBody] IdRequest request,
+                [FromServices] IProjectsService projectService,
+                CancellationToken token) =>
+            {
+                try
+                {
+                    return Results.Ok(await projectService.GetHtmlByIdAsync(request.Id, token));
+                }
+                catch
+                {
+                    return Results.InternalServerError();
+                }
+            });
+
+            app.MapDelete("/project/html", async (HttpContext context,
+                [FromBody] IdRequest request,
+                [FromServices] IProjectsService projectService,
+                CancellationToken token) =>
+            {
+                try
+                {
+                    int result = await projectService.DeleteAsync(request.Id, token);
+                    if (result == 0) return Results.BadRequest("Проект не был удален из-за ошибки");
+                    return Results.Ok();
+                }
+                catch
+                {
+                    return Results.InternalServerError();
+                }
+            });
+
+            app.MapPost("/project/update", async (HttpContext context,
+                [FromBody] ProjectUpdateRequest request,
+                [FromServices] IProjectsService projectService,
+                CancellationToken token) =>
+            {
+                try
+                {
+                    if (request is null) return Results.BadRequest("Пустые данные");
+                    ResultModel<Projects> project = Projects.Create(request.Id, request.Name,
+                        DateTime.Now, request.TextHtml);
+                    if (project.Error != string.Empty) return Results.BadRequest(project.Error);
+                    int resultUpdate = await projectService.UpdateHtmlAsync(project.Value, token);
+                    if (resultUpdate == 0) return Results.BadRequest("Не удалось обновить проект");
+                    return Results.Ok();
+                }
+                catch
+                {
+                    return Results.InternalServerError();
+                }
+            });
+
+            app.MapPost("/project/new", async (HttpContext context,
+                [FromBody] ProjectCreateRequest request,
+                [FromServices] IProjectsService projectService,
+                CancellationToken token) =>
+            {
+                try
+                {
+                    if (request is null) return Results.BadRequest("Пустые данные");
+                    ResultModel<Projects> project = Projects.Create(Guid.NewGuid(), request.Name,
+                            DateTime.Now, string.Empty);
+                    if (project.Error != string.Empty) return Results.BadRequest(project.Error);
+                    bool checkResult = await projectService.CheckNameAsync(project.Value.Name, token);
+                    if (checkResult) return Results.BadRequest("Проект с таким названием уже существует");
+                    Guid updateResult = await projectService.CreateAsync(project.Value, token);
+                    if (updateResult != project.Value.Id) return Results.BadRequest("Произошла ошибка");
+                    return Results.Ok();
+                }
+                catch
+                {
+                    return Results.InternalServerError();
+                }
+                
             });
 
             return app;

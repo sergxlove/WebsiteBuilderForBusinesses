@@ -15,7 +15,6 @@
                 <div class="brand-title">DarkForge Pro</div>
                 <div class="brand-sub">Конструктор сайтов нового поколения</div>
             </div>
-
             <div class="input-group">
                 <label>📧 Логин / Email</label>
                 <input type="text" id="loginUsername" placeholder="Введите ваш логин" autocomplete="username">
@@ -24,16 +23,13 @@
                 <label>🔒 Пароль</label>
                 <input type="password" id="loginPassword" placeholder="Введите пароль" autocomplete="current-password">
             </div>
-
             <button class="login-btn-submit" id="loginButton">Войти в конструктор →</button>
-
             <div id="messageContainer"></div>
             <div class="footer-note">
                 ⚡ Профессиональный конструктор | Тёмная тема | 40+ элементов
             </div>
         </div>
     </div>
-
     <script>
         (function () {
             const loginBtn = document.getElementById('loginButton');
@@ -90,7 +86,6 @@
                             password: password
                         })
                     });
-
                     if (response.ok) {
                         const userData = {
                             username: username,
@@ -136,7 +131,6 @@
                 }
             }
             loginBtn.addEventListener('click', attemptLogin);
-
             const handleEnter = (e) => {
                 if (e.key === 'Enter') {
                     e.preventDefault();

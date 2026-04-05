@@ -3,4 +3,5 @@
   <Project Path="WebsiteBuilderForBusinesses.Applications/WebsiteBuilderForBusinesses.Applications.csproj" />
   <Project Path="WebsiteBuilderForBusinesses.Core/WebsiteBuilderForBusinesses.Core.csproj" />
   <Project Path="WebsiteBuilderForBusinesses.DataAccess.Postgres/WebsiteBuilderForBusinesses.DataAccess.Postgres.csproj" />
+  <Project Path="WebsiteBuilderForBusinesses.Tests/WebsiteBuilderForBusinesses.Tests.csproj" Id="cf6c4df9-86e5-468e-9713-114ac8bd8133" />
 </Solution>
