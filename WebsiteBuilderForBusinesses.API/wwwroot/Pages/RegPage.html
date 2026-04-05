@@ -38,7 +38,7 @@
             <button class="register-btn-submit" id="registerButton">Зарегистрироваться →</button>
             <div id="messageContainer"></div>
             <div class="footer-note">
-                Уже есть аккаунт? <a href="login.html">Войти</a>
+                Уже есть аккаунт? <a href="/page/login">Войти</a>
             </div>
         </div>
     </div>
@@ -124,7 +124,7 @@
                     showMessage('✅ Регистрация выполнена успешно! Перенаправление...', false);
 
                     setTimeout(() => {
-                        window.location.href = 'builder.html';
+                        window.location.href = '/index';
                     }, 800);
                 } else if (response.status === 400) {
                     let errorText = '❌ Ошибка регистрации';

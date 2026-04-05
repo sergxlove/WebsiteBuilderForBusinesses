@@ -37,5 +37,10 @@ namespace WebsiteBuilderForBusinesses.Applications.Services
         {
             return await _repository.UpdateHtmlAsync(project, token);
         }
+
+        public async Task<int> UpdateNameAsync(string oldName, string newName, CancellationToken token)
+        {
+            return await _repository.UpdateNameAsync(oldName, newName, token);
+        }
     }
 }

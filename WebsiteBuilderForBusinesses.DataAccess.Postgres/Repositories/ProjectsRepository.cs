@@ -60,6 +60,15 @@ namespace WebsiteBuilderForBusinesses.DataAccess.Postgres.Repositories
                 .SetProperty(a => a.TextHtml, project.TextHtml), token);
         }
 
+        public async Task<int> UpdateNameAsync(string oldName, string newName, CancellationToken token)
+        {
+            return await _context.Projects
+                .AsNoTracking()
+                .Where(a => a.Name == oldName)
+                .ExecuteUpdateAsync(a => a
+                .SetProperty(a => a.Name, newName), token);
+        }
+
         public async Task<int> DeleteAsync(Guid id, CancellationToken token)
         {
             return await _context.Projects

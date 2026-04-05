@@ -56,7 +56,7 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                 }
             });
 
-            app.MapPost("/project/update", async (HttpContext context,
+            app.MapPost("/project/html/update", async (HttpContext context,
                 [FromBody] ProjectUpdateRequest request,
                 [FromServices] IProjectsService projectService,
                 CancellationToken token) =>
@@ -65,9 +65,31 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                 {
                     if (request is null) return Results.BadRequest("Пустые данные");
                     ResultModel<Projects> project = Projects.Create(request.Id, request.Name,
-                        DateTime.Now, request.TextHtml);
+                        DateTime.UtcNow, request.TextHtml);
                     if (project.Error != string.Empty) return Results.BadRequest(project.Error);
                     int resultUpdate = await projectService.UpdateHtmlAsync(project.Value, token);
+                    if (resultUpdate == 0) return Results.BadRequest("Не удалось обновить проект");
+                    return Results.Ok();
+                }
+                catch
+                {
+                    return Results.InternalServerError();
+                }
+            });
+
+            app.MapPost("/project/name/update", async (HttpContext context,
+                [FromBody] ProjectNameUpdateRequest request,
+                [FromServices] IProjectsService projectService,
+                CancellationToken token) =>
+            {
+                try
+                {
+                    if (request is null) return Results.BadRequest("Пустые данные");
+                    ResultModel<Projects> project = Projects.Create(Guid.NewGuid(), request.OldName,
+                        DateTime.UtcNow, string.Empty);
+                    if (project.Error != string.Empty) return Results.BadRequest(project.Error);
+                    int resultUpdate = await projectService.UpdateNameAsync(request.OldName,
+                        request.NewName, token);
                     if (resultUpdate == 0) return Results.BadRequest("Не удалось обновить проект");
                     return Results.Ok();
                 }
@@ -86,7 +108,7 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                 {
                     if (request is null) return Results.BadRequest("Пустые данные");
                     ResultModel<Projects> project = Projects.Create(Guid.NewGuid(), request.Name,
-                            DateTime.Now, string.Empty);
+                            DateTime.UtcNow, string.Empty);
                     if (project.Error != string.Empty) return Results.BadRequest(project.Error);
                     bool checkResult = await projectService.CheckNameAsync(project.Value.Name, token);
                     if (checkResult) return Results.BadRequest("Проект с таким названием уже существует");

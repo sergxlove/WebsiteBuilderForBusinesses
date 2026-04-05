@@ -87,8 +87,7 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
             {
                 context.Response.Cookies.Delete("jwt");
                 return Results.Ok();
-            }).RequireAuthorization("OnlyForAuthUser")
-            .RequireRateLimiting("GeneralPolicy");
+            });
 
             return app;
         }
