@@ -28,6 +28,12 @@
                 await context.Response.SendFileAsync("wwwroot/Pages/RegPage.html");
             });
 
+            app.MapGet("/page/projects", async (HttpContext context) =>
+            {
+                context.Response.ContentType = "text/html; charset=utf-8";
+                await context.Response.SendFileAsync("wwwroot/Pages/ProjectsPage.html");
+            });
+
             return app;
         }
     }

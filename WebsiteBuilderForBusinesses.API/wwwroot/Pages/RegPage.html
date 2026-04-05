@@ -15,23 +15,19 @@
                 <div class="brand-title">DarkForge Pro</div>
                 <div class="brand-sub">Создайте аккаунт</div>
             </div>
-
             <div class="input-group">
                 <label>📧 Логин / Email</label>
                 <input type="text" id="regLogin" placeholder="Введите ваш логин" autocomplete="username">
             </div>
-
             <div class="input-group">
                 <label>🔒 Пароль</label>
                 <input type="password" id="regPassword" placeholder="Введите пароль" autocomplete="new-password">
                 <div class="password-hint">Минимальная длина: 6 символов</div>
             </div>
-
             <div class="input-group">
                 <label>🔒 Подтверждение пароля</label>
                 <input type="password" id="regAgainPassword" placeholder="Повторите пароль" autocomplete="new-password">
             </div>
-
             <div class="input-group">
                 <label>👤 Роль</label>
                 <select id="regRole">
@@ -39,16 +35,13 @@
                     <option value="admin">Администратор</option>
                 </select>
             </div>
-
             <button class="register-btn-submit" id="registerButton">Зарегистрироваться →</button>
-
             <div id="messageContainer"></div>
             <div class="footer-note">
                 Уже есть аккаунт? <a href="login.html">Войти</a>
             </div>
         </div>
     </div>
-
     <script>
     (function () {
         const registerBtn = document.getElementById('registerButton');
@@ -57,9 +50,7 @@
         const againPasswordInput = document.getElementById('regAgainPassword');
         const roleSelect = document.getElementById('regRole');
         const messageContainer = document.getElementById('messageContainer');
-
         let isLoading = false;
-
         function showMessage(text, isError = true) {
             messageContainer.innerHTML = `
                 <div class="${isError ? 'error-message' : 'success-message'}">
@@ -74,19 +65,15 @@
                 }, 5000);
             }
         }
-
         function clearMessages() {
             messageContainer.innerHTML = '';
         }
-
         async function attemptRegister() {
             const login = loginInput.value.trim();
             const password = passwordInput.value;
             const againPassword = againPasswordInput.value;
             const role = roleSelect.value;
-
             clearMessages();
-
             if (login.length === 0) {
                 showMessage('❌ Введите логин', true);
                 loginInput.focus();
@@ -98,31 +85,26 @@
                 passwordInput.focus();
                 return;
             }
-
             if (password.length < 6) {
                 showMessage('❌ Пароль должен содержать минимум 6 символов', true);
                 passwordInput.focus();
                 return;
             }
-
             if (againPassword.length === 0) {
                 showMessage('❌ Подтвердите пароль', true);
                 againPasswordInput.focus();
                 return;
             }
-
             if (password !== againPassword) {
                 showMessage('❌ Пароли не совпадают', true);
                 againPasswordInput.focus();
                 return;
             }
-
             if (isLoading) return;
             isLoading = true;
             registerBtn.disabled = true;
             const originalBtnText = registerBtn.innerHTML;
             registerBtn.innerHTML = '<span class="loading-spinner"></span> Регистрация...';
-
             try {
                 const response = await fetch('/reg', {
                     method: 'POST',
@@ -138,7 +120,6 @@
                         role: role
                     })
                 });
-
                 if (response.ok) {
                     showMessage('✅ Регистрация выполнена успешно! Перенаправление...', false);
 
@@ -154,7 +135,6 @@
                         }
                     } catch (e) {}
                     showMessage(errorText, true);
-
                     const card = document.querySelector('.register-card');
                     card.style.transform = 'translateX(4px)';
                     setTimeout(() => { card.style.transform = ''; }, 100);
@@ -178,9 +158,7 @@
                 registerBtn.innerHTML = originalBtnText;
             }
         }
-
         registerBtn.addEventListener('click', attemptRegister);
-
         const handleEnter = (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
