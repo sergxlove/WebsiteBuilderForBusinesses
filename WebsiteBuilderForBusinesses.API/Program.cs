@@ -37,11 +37,11 @@ namespace WebsiteBuilderForBusinesses.API
                         .GetSection("JwtSettings");
                     options.TokenValidationParameters = new()
                     {
-                        ValidateIssuer = false,
+                        ValidateIssuer = true,
                         ValidIssuer = jwtSettings["Issuer"],
-                        ValidateAudience = false,
+                        ValidateAudience = true,
                         ValidAudience = jwtSettings["Audience"],
-                        ValidateLifetime = false,
+                        ValidateLifetime = true,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
                             .GetBytes(jwtSettings["SecretKey"]!)),
                         ValidateIssuerSigningKey = true
@@ -105,16 +105,15 @@ namespace WebsiteBuilderForBusinesses.API
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-
             var app = builder.Build();
+            app.UseStaticFiles();
+            app.UseStatusCodePagesWithReExecute("/error/{0}");
             app.UseCors("AllowAll");
             app.UseSwagger();
             app.UseSwaggerUI();
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseStaticFiles();
             app.UseRateLimiter();
-            app.UseStatusCodePagesWithReExecute("/error/{0}");
             app.MapAllEndpoints();
             app.Run();
         }
