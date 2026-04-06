@@ -81,13 +81,15 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                 {
                     return Results.InternalServerError();
                 }
-            }).RequireRateLimiting("GeneralPolicy");
+            }).RequireAuthorization("OnlyForAdmin")
+            .RequireRateLimiting("GeneralPolicy");
 
             app.MapGet("/logout", (HttpContext context) =>
             {
                 context.Response.Cookies.Delete("jwt");
                 return Results.Ok();
-            });
+            }).RequireAuthorization("OnlyForAuthUser")
+            .RequireRateLimiting("GeneralPolicy");
 
             return app;
         }

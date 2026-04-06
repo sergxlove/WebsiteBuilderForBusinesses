@@ -121,11 +121,7 @@
                     })
                 });
                 if (response.ok) {
-                    showMessage('✅ Регистрация выполнена успешно! Перенаправление...', false);
-
-                    setTimeout(() => {
-                        window.location.href = '/index';
-                    }, 800);
+                    showMessage('✅ Регистрация выполнена успешно!', false);
                 } else if (response.status === 400) {
                     let errorText = '❌ Ошибка регистрации';
                     try {

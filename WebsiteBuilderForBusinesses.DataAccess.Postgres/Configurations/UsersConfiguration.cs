@@ -16,6 +16,22 @@ namespace WebsiteBuilderForBusinesses.DataAccess.Postgres.Configurations
                 .IsRequired();
             builder.Property(a => a.Role)
                 .IsRequired();
+            builder.HasData(
+                new UsersEntity
+                {
+                    Id = Guid.NewGuid(),
+                    Login = "admin@mail.ru",
+                    HashPassword = "$2a$11$cXzJITgtUiw/4cWi1y.XH.xHG01Bwyj53m3w2HOU4nWIrOk24AgXG", //admin123
+                    Role = "admin"
+                },
+                new UsersEntity
+                {
+                    Id = Guid.NewGuid(),
+                    Login = "user@mail.ru",
+                    HashPassword = "$2a$11$zD.sI1v4tUcoNEHXYH/vduhMU8kiFMXJh5yURxIkE5S2emBiS156i", //user123
+                    Role = "user"
+                }
+                );
         }
     }
 }

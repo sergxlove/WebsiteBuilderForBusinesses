@@ -22,7 +22,8 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                 {
                     return Results.InternalServerError();
                 }
-            });
+            }).RequireAuthorization("OnlyForAuthUser")
+            .RequireRateLimiting("GeneralPolicy");
 
             app.MapPost("/project/html", async (HttpContext context,
                 [FromBody] IdRequest request,
@@ -37,7 +38,8 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                 {
                     return Results.InternalServerError();
                 }
-            });
+            }).RequireAuthorization("OnlyForAuthUser")
+            .RequireRateLimiting("GeneralPolicy");
 
             app.MapDelete("/project/html", async (HttpContext context,
                 [FromBody] IdRequest request,
@@ -55,7 +57,8 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                 {
                     return Results.InternalServerError();
                 }
-            });
+            }).RequireAuthorization("OnlyForAuthUser")
+            .RequireRateLimiting("GeneralPolicy");
 
             app.MapPost("/project/html/update", async (HttpContext context,
                 [FromBody] ProjectUpdateRequest request,
@@ -76,7 +79,8 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                 {
                     return Results.InternalServerError();
                 }
-            });
+            }).RequireAuthorization("OnlyForAuthUser")
+            .RequireRateLimiting("GeneralPolicy");
 
             app.MapPost("/project/name/update", async (HttpContext context,
                 [FromBody] ProjectNameUpdateRequest request,
@@ -98,7 +102,8 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                 {
                     return Results.InternalServerError();
                 }
-            });
+            }).RequireAuthorization("OnlyForAuthUser")
+            .RequireRateLimiting("GeneralPolicy");
 
             app.MapPost("/project/new", async (HttpContext context,
                 [FromBody] ProjectCreateRequest request,
@@ -122,7 +127,8 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                     return Results.InternalServerError();
                 }
                 
-            });
+            }).RequireAuthorization("OnlyForAuthUser")
+            .RequireRateLimiting("GeneralPolicy");
 
             return app;
         }

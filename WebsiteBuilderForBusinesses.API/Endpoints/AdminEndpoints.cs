@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
+using System.Text;
 using WebsiteBuilderForBusinesses.API.Requests;
 using WebsiteBuilderForBusinesses.Applications.Abstractions;
 using WebsiteBuilderForBusinesses.Core.Abstractions;
@@ -23,7 +25,8 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                 {
                     return Results.InternalServerError();
                 }
-            });
+            }).RequireAuthorization("OnlyForAdmin")
+            .RequireRateLimiting("GeneralPolicy");
 
             app.MapPost("/users/password/update", async (HttpContext context,
                 [FromBody] PasswordUpdateRequest request,
@@ -45,7 +48,8 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                 {
                     return Results.InternalServerError();
                 }
-            });
+            }).RequireAuthorization("OnlyForAdmin")
+            .RequireRateLimiting("GeneralPolicy");
 
             app.MapPost("/users/role/update", async (HttpContext context,
                 [FromBody] RoleUpdateRequest request,
@@ -67,7 +71,8 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                 {
                     return Results.InternalServerError();
                 }
-            });
+            }).RequireAuthorization("OnlyForAdmin")
+            .RequireRateLimiting("GeneralPolicy");
 
             app.MapDelete("/users", async (HttpContext context,
                 [FromBody] IdRequest request,
@@ -85,7 +90,45 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                 {
                     return Results.InternalServerError();
                 }
-            });
+            }).RequireAuthorization("OnlyForAdmin")
+            .RequireRateLimiting("GeneralPolicy");
+
+            app.MapGet("/api/backup/create", async () =>
+            {
+                string fileName = $"backup_{DateTime.Now:yyyyMMdd_HHmmss}.sql";
+                string containerName = "webbuilder-db";
+                try
+                {
+                    var process = new Process
+                    {
+                        StartInfo = new ProcessStartInfo
+                        {
+                            FileName = "docker",
+                            Arguments = $"exec {containerName} pg_dump -U postgres -d db",
+                            RedirectStandardOutput = true,
+                            RedirectStandardError = true,
+                            UseShellExecute = false,
+                            CreateNoWindow = true,
+                            StandardOutputEncoding = Encoding.UTF8
+                        }
+                    };
+                    process.Start();
+                    string output = await process.StandardOutput.ReadToEndAsync();
+                    string error = await process.StandardError.ReadToEndAsync();
+                    await process.WaitForExitAsync();
+                    if (process.ExitCode != 0)
+                    {
+                        return Results.BadRequest($"Ошибка pg_dump: {error}");
+                    }
+                    var fileBytes = Encoding.UTF8.GetBytes(output);
+                    return Results.File(fileBytes, "application/octet-stream", fileName);
+                }
+                catch (Exception ex)
+                {
+                    return Results.BadRequest($"Ошибка: {ex.Message}");
+                }
+            }).RequireAuthorization("OnlyForAdmin")
+            .RequireRateLimiting("GeneralPolicy");
 
             return app;
         }
