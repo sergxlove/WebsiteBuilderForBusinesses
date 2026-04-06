@@ -1,6 +1,7 @@
 ﻿using WebsiteBuilderForBusinesses.Applications.Abstractions;
 using WebsiteBuilderForBusinesses.Core.Models;
 using WebsiteBuilderForBusinesses.DataAccess.Postgres.Abstractions;
+using WebsiteBuilderForBusinesses.DataAccess.Postgres.Dto;
 
 namespace WebsiteBuilderForBusinesses.Applications.Services
 {
@@ -26,6 +27,22 @@ namespace WebsiteBuilderForBusinesses.Applications.Services
         public async Task<bool> VerifyAsync(string login, string password)
         {
             return await _repository.VerifyAsync(login, password);
+        }
+        public async Task<int> UpdatePasswordAsync(Users user, CancellationToken token)
+        {
+            return await _repository.UpdatePasswordAsync(user, token);
+        }
+        public async Task<List<ShortUserDto>> GetAllAsync(CancellationToken token)
+        {
+            return await _repository.GetAllAsync(token);
+        }
+        public async Task<int> UpdateRoleAsync(Users user, CancellationToken token)
+        {
+            return await _repository.UpdateRoleAsync(user, token);
+        }
+        public async Task<int> DeleteAsync(Guid id, CancellationToken token)
+        {
+            return await _repository.DeleteAsync(id, token);
         }
     }
 }

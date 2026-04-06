@@ -34,6 +34,12 @@
                 await context.Response.SendFileAsync("wwwroot/Pages/ProjectsPage.html");
             });
 
+            app.MapGet("/page/admin", async (HttpContext context) =>
+            {
+                context.Response.ContentType = "text/html; charset=utf-8";
+                await context.Response.SendFileAsync("wwwroot/Pages/AdminPage.html");
+            });
+
             return app;
         }
     }

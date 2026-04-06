@@ -25,7 +25,7 @@ namespace WebsiteBuilderForBusinesses.Applications.Services
         {
             return await _repository.DeleteAsync(id, token);
         }
-        public async Task<List<ShortProject>> GetAllAsync(CancellationToken token)
+        public async Task<List<ShortProjectDto>> GetAllAsync(CancellationToken token)
         {
             return await _repository.GetAllAsync(token);
         }
