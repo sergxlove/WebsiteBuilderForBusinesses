@@ -46,6 +46,7 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
             {
                 try
                 {
+                    if (request is null) return Results.BadRequest("Пустые данные");
                     int result = await projectService.DeleteAsync(request.Id, token);
                     if (result == 0) return Results.BadRequest("Проект не был удален из-за ошибки");
                     return Results.Ok();

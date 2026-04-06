@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebsiteBuilderForBusinesses.Core.Models;
 using WebsiteBuilderForBusinesses.DataAccess.Postgres.Abstractions;
+using WebsiteBuilderForBusinesses.DataAccess.Postgres.Dto;
 using WebsiteBuilderForBusinesses.DataAccess.Postgres.Models;
 
 namespace WebsiteBuilderForBusinesses.DataAccess.Postgres.Repositories
@@ -53,6 +54,45 @@ namespace WebsiteBuilderForBusinesses.DataAccess.Postgres.Repositories
             var user = await _context.Users.FirstOrDefaultAsync(a => a.Login == login, token);
             if (user is null) return "user";
             return user.Role;
+        }
+
+        public async Task<int> UpdatePasswordAsync(Users user, CancellationToken token)
+        {
+            return await _context.Users
+                .AsNoTracking()
+                .Where(a => a.Login == user.Login)
+                .ExecuteUpdateAsync(a => a
+                .SetProperty(a => a.HashPassword, user.HashPassword), token);
+        }
+
+        public async Task<int> UpdateRoleAsync(Users user, CancellationToken token)
+        {
+            return await _context.Users
+                .AsNoTracking()
+                .Where(a => a.Login == user.Login)
+                .ExecuteUpdateAsync(a => a
+                .SetProperty(a => a.Role, user.Role), token);
+        }
+
+        public async Task<List<ShortUserDto>> GetAllAsync(CancellationToken token)
+        {
+            return await _context.Users
+                .AsNoTracking()
+                .Select(pr => new ShortUserDto
+                {
+                    Id = pr.Id,
+                    Login = pr.Login,
+                    Role = pr.Role,
+                })
+                .ToListAsync(token);
+        }
+
+        public async Task<int> DeleteAsync(Guid id, CancellationToken token)
+        {
+            return await _context.Users
+                .AsNoTracking()
+                .Where(a => a.Id == id)
+                .ExecuteDeleteAsync(token);
         }
     }
 }

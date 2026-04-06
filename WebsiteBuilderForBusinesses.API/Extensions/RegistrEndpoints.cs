@@ -9,6 +9,7 @@ namespace WebsiteBuilderForBusinesses.API.Extensions
             app.MapLoginEndpoints();
             app.MapGetPageEndpoints();
             app.MapProjectEndpoints();
+            app.MapAdminEndpoints();
             return app;
         }
     }

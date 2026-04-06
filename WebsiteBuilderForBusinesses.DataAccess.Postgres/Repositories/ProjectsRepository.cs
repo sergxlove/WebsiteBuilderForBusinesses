@@ -37,11 +37,11 @@ namespace WebsiteBuilderForBusinesses.DataAccess.Postgres.Repositories
             return result.TextHtml;
         }
 
-        public async Task<List<ShortProject>> GetAllAsync(CancellationToken token)
+        public async Task<List<ShortProjectDto>> GetAllAsync(CancellationToken token)
         {
             return await _context.Projects
                 .AsNoTracking()
-                .Select(pr => new ShortProject
+                .Select(pr => new ShortProjectDto
                 {
                     Id = pr.Id,
                     Name = pr.Name,
