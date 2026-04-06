@@ -1,9 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using WebsiteBuilderForBusinesses.API.Requests;
 using WebsiteBuilderForBusinesses.Applications.Abstractions;
-using WebsiteBuilderForBusinesses.Applications.Services;
 using WebsiteBuilderForBusinesses.Core.Abstractions;
 using WebsiteBuilderForBusinesses.Core.Infrastructures;
 using WebsiteBuilderForBusinesses.Core.Models;

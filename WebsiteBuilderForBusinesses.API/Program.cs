@@ -105,6 +105,7 @@ namespace WebsiteBuilderForBusinesses.API
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+
             var app = builder.Build();
             app.UseCors("AllowAll");
             app.UseSwagger();
@@ -113,6 +114,7 @@ namespace WebsiteBuilderForBusinesses.API
             app.UseAuthorization();
             app.UseStaticFiles();
             app.UseRateLimiter();
+            app.UseStatusCodePagesWithReExecute("/error/{0}");
             app.MapAllEndpoints();
             app.Run();
         }
