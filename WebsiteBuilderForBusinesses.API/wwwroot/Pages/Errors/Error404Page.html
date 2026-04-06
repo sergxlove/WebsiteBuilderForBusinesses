@@ -1,0 +1,43 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <link rel="stylesheet" href="../../Styles/ErrorPage.css">
+    <title>DarkForge Pro · Ошибка</title>
+</head>
+<body>
+    <div class="error-container">
+        <div class="brand-header">
+            <div class="logo-area">
+                <div class="logo-icon">⚠️⚡</div>
+                <div class="brand-title">DarkForge Pro</div>
+                <div class="brand-sub">Error page</div>
+            </div>
+            <div class="error-badge" id="liveErrorBadge">Ошибка 404</div>
+        </div>
+        <div class="error-main">
+            <div class="error-bg-particles" id="particlesContainer"></div>
+            <div class="error-code-wrapper">
+                <div class="error-glitch" id="errorNumberDisplay">404</div>
+                <div class="error-subtitle" id="errorDescription">Страница не найдена</div>
+            </div>
+            <div class="footer-note">
+                <span class="status-msg" id="statusMsg">✨ DarkForge Pro | Ошибка 404</span>
+            </div>
+        </div>
+    </div>
+    <script>
+    (function() {
+        setInterval(() => {
+            const badge = document.getElementById('liveErrorBadge');
+            if (badge) {
+                badge.style.transition = '0.2s';
+                badge.style.opacity = '0.85';
+                setTimeout(() => { if(badge) badge.style.opacity = '1'; }, 200);
+            }
+        }, 4000);
+    })();
+    </script>
+</body>
+</html>
