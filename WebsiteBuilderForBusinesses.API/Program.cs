@@ -64,7 +64,7 @@ namespace WebsiteBuilderForBusinesses.API
                 });
                 options.AddPolicy("OnlyForAuthUser", policy =>
                 {
-                    policy.RequireRole("user");
+                    policy.RequireRole("user", "admin");
                 });
             });
 

@@ -212,6 +212,14 @@
                     background: #059669;
                 }
 
+            .tool-btn.projects {
+                background: #8b5cf6;
+            }
+
+                .tool-btn.projects:hover {
+                    background: #7c3aed;
+                }
+
         .drag-info {
             background: #1e2436;
             padding: 5px 14px;
@@ -645,6 +653,7 @@
 
         <div class="quick-bar">
             <div class="tool-group">
+                <button class="tool-btn projects" id="backToProjectsBtn">📁 Мои проекты</button>
                 <div class="drag-info">⋮⋮ Зажмите и перетащите любой элемент</div>
                 <div class="bg-control">
                     <span class="bg-label">🎨 ФОН САЙТА</span>
@@ -740,6 +749,7 @@
             const logoutBtn = document.getElementById('logoutBtn');
             const projectNameSpan = document.getElementById('projectNameSpan');
             const saveStatusSpan = document.getElementById('saveStatusSpan');
+            const backToProjectsBtn = document.getElementById('backToProjectsBtn');
 
             let selectedElement = null;
             let sortableInstance = null;
@@ -769,11 +779,11 @@
                 overlay.id = 'loadingOverlay';
                 overlay.className = 'loading-overlay';
                 overlay.innerHTML = `
-                            <div class="loading-content">
-                                <div class="loading-spinner"></div>
-                                <div class="loading-text">Загрузка проекта...</div>
-                            </div>
-                        `;
+                                <div class="loading-content">
+                                    <div class="loading-spinner"></div>
+                                    <div class="loading-text">Загрузка проекта...</div>
+                                </div>
+                            `;
                 document.body.appendChild(overlay);
             }
 
@@ -824,9 +834,10 @@
                 if (currentProjectId) {
                     if (saveTimeout) clearTimeout(saveTimeout);
                     updateSaveStatus('saving', '● Есть изменения');
+                    // Увеличенное время автосохранения с 3 до 10 секунд
                     saveTimeout = setTimeout(() => {
                         saveProjectToDatabase();
-                    }, 3000);
+                    }, 10000);
                 }
             }
 
@@ -920,24 +931,38 @@
                 } catch { showToast('Не удалось выполнить выход', true); }
             }
 
+            function goBackToProjects() {
+                if (confirm('Сохранить изменения перед выходом?')) {
+                    if (saveTimeout) {
+                        clearTimeout(saveTimeout);
+                        saveProjectToDatabase();
+                    }
+                    setTimeout(() => {
+                        window.location.href = '/page/projects';
+                    }, 500);
+                } else {
+                    window.location.href = '/page/projects';
+                }
+            }
+
             function getDefaultHtml() {
                 return `
-                            <div style="padding: 28px; text-align: center; background: linear-gradient(135deg, #10141f, #070a10); border-radius: 32px; margin: 20px;">
-                                <h2 style="color:#e0e7ff;">⚡ DarkForge Pro с контейнерами</h2>
-                                <p style="color:#b9c3db; margin: 12px 0;">🎯 Добавьте контейнер и перетащите в него элементы!</p>
-                                <button style="background:#8b5cf6; border:none; padding:10px 28px; border-radius: 60px;">✨ Попробуй</button>
-                            </div>
-                            <div style="display: flex; gap: 16px; padding: 10px;">
-                                <div style="flex:1; background:#10151f; border-radius: 24px; padding: 18px;">
-                                    <h3>📦 Контейнеры</h3>
-                                    <p>Добавляйте блоки и вкладывайте элементы</p>
+                                <div style="padding: 28px; text-align: center; background: linear-gradient(135deg, #10141f, #070a10); border-radius: 32px; margin: 20px;">
+                                    <h2 style="color:#e0e7ff;">⚡ DarkForge Pro с контейнерами</h2>
+                                    <p style="color:#b9c3db; margin: 12px 0;">🎯 Добавьте контейнер и перетащите в него элементы!</p>
+                                    <button style="background:#8b5cf6; border:none; padding:10px 28px; border-radius: 60px;">✨ Попробуй</button>
                                 </div>
-                                <div style="flex:1; background:#10151f; border-radius: 24px; padding: 18px;">
-                                    <h3>🎨 Перетаскивание</h3>
-                                    <p>Элементы можно перемещать внутри контейнеров</p>
+                                <div style="display: flex; gap: 16px; padding: 10px;">
+                                    <div style="flex:1; background:#10151f; border-radius: 24px; padding: 18px;">
+                                        <h3>📦 Контейнеры</h3>
+                                        <p>Добавляйте блоки и вкладывайте элементы</p>
+                                    </div>
+                                    <div style="flex:1; background:#10151f; border-radius: 24px; padding: 18px;">
+                                        <h3>🎨 Перетаскивание</h3>
+                                        <p>Элементы можно перемещать внутри контейнеров</p>
+                                    </div>
                                 </div>
-                            </div>
-                        `;
+                            `;
             }
 
             function initDragAndDrop() {
@@ -1066,33 +1091,33 @@
                 if (isImage) extraHtml = `<div class="prop-group"><label>🖼 URL изображения</label><input type="text" id="propImgSrc" value="${escapeHtml(imgSrc)}"></div>`;
 
                 propContentDiv.innerHTML = `
-                            ${!isImage ? `<div class="prop-group"><label>📝 Текст / содержимое</label><input type="text" id="propText" value="${escapeHtml(currentText)}"></div>` : ''}
-                            ${extraHtml}
-                            <div class="prop-group"><label>🎨 Цвет текста</label><input type="color" id="propColor" value="${currentColorHex}"></div>
-                            <div class="prop-group"><label>🖌 Фон элемента</label><input type="color" id="propBgColor" value="${currentBgHex}"></div>
-                            <div class="prop-group"><label>📏 Размер шрифта (px)</label><input type="number" id="propFontSize" value="${parseFloat(currentFs) || 16}" step="1"></div>
-                            <div class="prop-group"><label>🔲 Внутренние отступы (padding)</label>
-                                <div class="spacing-grid">
-                                    <div class="spacing-item"><label>Верх</label><input type="number" id="paddingTop" value="${paddingObj.top}"></div>
-                                    <div class="spacing-item"><label>Право</label><input type="number" id="paddingRight" value="${paddingObj.right}"></div>
-                                    <div class="spacing-item"><label>Низ</label><input type="number" id="paddingBottom" value="${paddingObj.bottom}"></div>
-                                    <div class="spacing-item"><label>Лево</label><input type="number" id="paddingLeft" value="${paddingObj.left}"></div>
+                                ${!isImage ? `<div class="prop-group"><label>📝 Текст / содержимое</label><input type="text" id="propText" value="${escapeHtml(currentText)}"></div>` : ''}
+                                ${extraHtml}
+                                <div class="prop-group"><label>🎨 Цвет текста</label><input type="color" id="propColor" value="${currentColorHex}"></div>
+                                <div class="prop-group"><label>🖌 Фон элемента</label><input type="color" id="propBgColor" value="${currentBgHex}"></div>
+                                <div class="prop-group"><label>📏 Размер шрифта (px)</label><input type="number" id="propFontSize" value="${parseFloat(currentFs) || 16}" step="1"></div>
+                                <div class="prop-group"><label>🔲 Внутренние отступы (padding)</label>
+                                    <div class="spacing-grid">
+                                        <div class="spacing-item"><label>Верх</label><input type="number" id="paddingTop" value="${paddingObj.top}"></div>
+                                        <div class="spacing-item"><label>Право</label><input type="number" id="paddingRight" value="${paddingObj.right}"></div>
+                                        <div class="spacing-item"><label>Низ</label><input type="number" id="paddingBottom" value="${paddingObj.bottom}"></div>
+                                        <div class="spacing-item"><label>Лево</label><input type="number" id="paddingLeft" value="${paddingObj.left}"></div>
+                                    </div>
+                                    <div class="hint-px">✏️ px добавляется автоматически</div>
                                 </div>
-                                <div class="hint-px">✏️ px добавляется автоматически</div>
-                            </div>
-                            <div class="prop-group"><label>🔄 Внешние отступы (margin)</label>
-                                <div class="spacing-grid">
-                                    <div class="spacing-item"><label>Верх</label><input type="number" id="marginTop" value="${marginObj.top}"></div>
-                                    <div class="spacing-item"><label>Право</label><input type="number" id="marginRight" value="${marginObj.right}"></div>
-                                    <div class="spacing-item"><label>Низ</label><input type="number" id="marginBottom" value="${marginObj.bottom}"></div>
-                                    <div class="spacing-item"><label>Лево</label><input type="number" id="marginLeft" value="${marginObj.left}"></div>
+                                <div class="prop-group"><label>🔄 Внешние отступы (margin)</label>
+                                    <div class="spacing-grid">
+                                        <div class="spacing-item"><label>Верх</label><input type="number" id="marginTop" value="${marginObj.top}"></div>
+                                        <div class="spacing-item"><label>Право</label><input type="number" id="marginRight" value="${marginObj.right}"></div>
+                                        <div class="spacing-item"><label>Низ</label><input type="number" id="marginBottom" value="${marginObj.bottom}"></div>
+                                        <div class="spacing-item"><label>Лево</label><input type="number" id="marginLeft" value="${marginObj.left}"></div>
+                                    </div>
+                                    <div class="hint-px">✏️ px добавляется автоматически</div>
                                 </div>
-                                <div class="hint-px">✏️ px добавляется автоматически</div>
-                            </div>
-                            <div class="prop-group"><label>⚡ Скругление</label><input type="text" id="propRadius" value="${currentRadius}"></div>
-                            <div class="prop-group"><label>🖌 Граница</label><input type="text" id="propBorder" value="${currentBorder !== 'none' ? currentBorder : '1px solid #2d3748'}"></div>
-                            <div class="prop-group"><label>✨ Доп. CSS</label><input type="text" id="propExtra" placeholder="box-shadow: 0 8px 20px rgba(0,0,0,0.3);"></div>
-                        `;
+                                <div class="prop-group"><label>⚡ Скругление</label><input type="text" id="propRadius" value="${currentRadius}"></div>
+                                <div class="prop-group"><label>🖌 Граница</label><input type="text" id="propBorder" value="${currentBorder !== 'none' ? currentBorder : '1px solid #2d3748'}"></div>
+                                <div class="prop-group"><label>✨ Доп. CSS</label><input type="text" id="propExtra" placeholder="box-shadow: 0 8px 20px rgba(0,0,0,0.3);"></div>
+                            `;
 
                 function updatePadding() {
                     if (!selectedElement) return;
@@ -1308,6 +1333,7 @@
             deleteBtn.addEventListener('click', deleteSelectedElem);
             bgPicker.addEventListener('input', (e) => preview.style.backgroundColor = e.target.value);
             logoutBtn.addEventListener('click', logout);
+            backToProjectsBtn.addEventListener('click', goBackToProjects);
 
             loadUserInfo();
 
