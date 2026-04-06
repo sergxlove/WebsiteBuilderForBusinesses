@@ -177,6 +177,14 @@ body {
     background: #dc2626;
 }
 
+.tool-btn.backup {
+    background: #8b5cf6;
+}
+
+.tool-btn.backup:hover {
+    background: #7c3aed;
+}
+
 .stats-info {
     background: #1e2436;
     padding: 5px 14px;
@@ -501,6 +509,37 @@ body {
     text-align: center;
     padding: 3rem;
     color: #5f6c84;
+}
+
+.backup-section {
+    background: #0c0f18;
+    border-radius: 1.5rem;
+    border: 1px solid #252d3c;
+    padding: 1.2rem;
+    margin-bottom: 1.5rem;
+}
+
+.backup-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.backup-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #a78bfa;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.backup-info {
+    font-size: 0.7rem;
+    color: #7e8aa2;
 }
 
 @media (max-width: 768px) {

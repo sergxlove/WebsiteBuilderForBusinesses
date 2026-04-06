@@ -16,6 +16,7 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                 [FromBody] LoginRequest request,
                 [FromServices] IUsersService userService,
                 [FromServices] IJwtProviderService jwtService,
+                [FromServices] IConfiguration configuration,
                 CancellationToken token) =>
             {
                 try
@@ -25,6 +26,7 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                     if (!await userService.VerifyAsync(request.Login, request.Password))
                         return Results.BadRequest("Неверный логин или пароль");
                     string userRole = await userService.GetRoleAsync(request.Login, token);
+                    IConfigurationSection? jwtSettings = configuration.GetSection("JwtSettings");
                     var claims = new List<Claim>()
                     {
                         new Claim(ClaimTypes.Role, userRole),
@@ -32,7 +34,11 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                     };
                     var jwttoken = jwtService.GenerateToken(new JwtRequest()
                     {
-                        Claims = claims
+                        Audience = jwtSettings["Audience"]!,
+                        Issuer = jwtSettings["Issuer"]!,
+                        Claims = claims,
+                        SecretKey = jwtSettings["SecretKey"]!,
+                        Expires = DateTime.UtcNow.AddMinutes(Convert.ToDouble(jwtSettings["Lifetime"]!))
                     });
                     context.Response.Cookies.Append("jwt", jwttoken!);
                     return Results.Ok();
@@ -48,6 +54,7 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                 [FromServices] IUsersService userService,
                 [FromServices] IJwtProviderService jwtService,
                 [FromServices] IPasswordHasherService passwordHasher,
+                [FromServices] IConfiguration configuration,
                 CancellationToken token) =>
             {
                 try
@@ -65,6 +72,7 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                         return Results.BadRequest("Данный пользователь уже есть");
                     }
                     var result = await userService.CreateAsync(user.Value, token);
+                    IConfigurationSection? jwtSettings = configuration.GetSection("JwtSettings");
                     var claims = new List<Claim>()
                     {
                         new Claim(ClaimTypes.Role, request.Role),
@@ -72,7 +80,11 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                     };
                     var jwttoken = jwtService.GenerateToken(new JwtRequest()
                     {
-                        Claims = claims
+                        Audience = jwtSettings["Audience"]!,
+                        Issuer = jwtSettings["Issuer"]!,
+                        Claims = claims,
+                        SecretKey = jwtSettings["SecretKey"]!,
+                        Expires = DateTime.UtcNow.AddMinutes(Convert.ToDouble(jwtSettings["Lifetime"]!))
                     });
                     context.Response.Cookies.Append("jwt", jwttoken!);
                     return Results.Ok();

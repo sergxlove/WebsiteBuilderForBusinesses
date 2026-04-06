@@ -25,10 +25,21 @@
             <div class="tool-group">
                 <div class="stats-info" id="statsInfo">👥 Загрузка пользователей...</div>
                 <button class="tool-btn primary" id="refreshUsersBtn">🔄 Обновить список</button>
+                <button class="tool-btn backup" id="createBackupBtn">💾 Создать бэкап БД</button>
             </div>
             <div class="status-msg" id="statusMsg">✨ Готов к управлению</div>
         </div>
         <div class="workspace">
+            <div class="backup-section">
+                <div class="backup-header">
+                    <div class="backup-title">
+                        🗄️ Управление резервными копиями
+                    </div>
+                    <div class="backup-info" id="backupInfo">
+                        Нажмите кнопку для создания бэкапа базы данных
+                    </div>
+                </div>
+            </div>
             <div class="users-table-wrapper">
                 <table class="users-table">
                     <thead>
@@ -48,361 +59,411 @@
             </div>
         </div>
     </div>
+
     <script>
-    (function() {
-        const API_BASE = '';
-        const USERS_ALL_URL = '/users/all';
-        const UPDATE_PASSWORD_URL = '/users/password/update';
-        const UPDATE_ROLE_URL = '/users/role/update';
-        const DELETE_USER_URL = '/users';
-        let currentUsers = [];
-        function showToast(message, type = 'success') {
-            const toast = document.createElement('div');
-            toast.className = `toast toast-${type}`;
-            toast.textContent = message;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
-        }
-        function showLoading() {
-            let overlay = document.getElementById('loadingOverlay');
-            if (!overlay) {
-                overlay = document.createElement('div');
-                overlay.id = 'loadingOverlay';
-                overlay.className = 'loading-overlay';
-                overlay.innerHTML = '<div class="loading-spinner"></div>';
-                document.body.appendChild(overlay);
+        (function () {
+            const API_BASE = '';
+            const USERS_ALL_URL = '/users/all';
+            const UPDATE_PASSWORD_URL = '/users/password/update';
+            const UPDATE_ROLE_URL = '/users/role/update';
+            const DELETE_USER_URL = '/users';
+            const CREATE_BACKUP_URL = '/api/backup/create';
+            let currentUsers = [];
+            function showToast(message, type = 'success') {
+                const toast = document.createElement('div');
+                toast.className = `toast toast-${type}`;
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
             }
-        }
-        function hideLoading() {
-            const overlay = document.getElementById('loadingOverlay');
-            if (overlay) overlay.remove();
-        }
-        async function fetchUsers() {
-            try {
-                const response = await fetch(USERS_ALL_URL, {
-                    method: 'GET',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include'
-                });
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
+            function showLoading() {
+                let overlay = document.getElementById('loadingOverlay');
+                if (!overlay) {
+                    overlay = document.createElement('div');
+                    overlay.id = 'loadingOverlay';
+                    overlay.className = 'loading-overlay';
+                    overlay.innerHTML = '<div class="loading-spinner"></div>';
+                    document.body.appendChild(overlay);
                 }
-                const users = await response.json();
-                currentUsers = users;
-                renderUsersTable(users);
-                document.getElementById('statsInfo').innerHTML = `👥 Пользователей: ${users.length}`;
-                document.getElementById('statusMsg').innerHTML = '✅ Данные обновлены';
-                showToast('Список пользователей загружен', 'success');
-                return users;
-            } catch (error) {
-                console.error('Fetch users error:', error);
-                document.getElementById('usersTableBody').innerHTML = '<tr><td colspan="4" class="empty-state">❌ Ошибка загрузки пользователей</td></tr>';
-                document.getElementById('statsInfo').innerHTML = '👥 Ошибка загрузки';
-                showToast('Не удалось загрузить пользователей', 'error');
-                return [];
             }
-        }
-        function renderUsersTable(users) {
-            const tbody = document.getElementById('usersTableBody');
-            if (!users || users.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" class="empty-state">📭 Нет пользователей</td></tr>';
-                return;
+            function hideLoading() {
+                const overlay = document.getElementById('loadingOverlay');
+                if (overlay) overlay.remove();
             }
-            tbody.innerHTML = users.map(user => `
-                <tr data-user-id="${user.id}">
-                    <td style="font-family: monospace; font-size: 0.75rem;">${user.id.substring(0, 8)}...</td>
-                    <td><strong>${escapeHtml(user.login)}</strong></td>
-                    <td>
-                        <span class="role-badge ${user.role === 'admin' ? 'role-admin' : 'role-user'}">
-                            ${user.role === 'admin' ? '👑 Администратор' : '👤 Пользователь'}
-                        </span>
-                    </td>
-                    <td>
-                        <div class="action-buttons-cell">
-                            <button class="action-icon edit-password" onclick="window.openPasswordModal('${user.id}', '${escapeHtml(user.login)}')">
-                                🔑 Сменить пароль
-                            </button>
-                            <button class="action-icon edit-role" onclick="window.openRoleModal('${user.id}', '${escapeHtml(user.login)}', '${user.role}')">
-                                🎭 Сменить роль
-                            </button>
-                            <button class="action-icon delete" onclick="window.deleteUser('${user.id}', '${escapeHtml(user.login)}')">
-                                🗑 Удалить
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            `).join('');
-        }
-        function escapeHtml(str) {
-            if (!str) return '';
-            return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m]));
-        }
-        let currentModal = null;
-        function closeModal() {
-            if (currentModal) {
-                currentModal.remove();
-                currentModal = null;
+            async function fetchUsers() {
+                try {
+                    const response = await fetch(USERS_ALL_URL, {
+                        method: 'GET',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include'
+                    });
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                    const users = await response.json();
+                    currentUsers = users;
+                    renderUsersTable(users);
+                    document.getElementById('statsInfo').innerHTML = `👥 Пользователей: ${users.length}`;
+                    document.getElementById('statusMsg').innerHTML = '✅ Данные обновлены';
+                    showToast('Список пользователей загружен', 'success');
+                    return users;
+                } catch (error) {
+                    console.error('Fetch users error:', error);
+                    document.getElementById('usersTableBody').innerHTML = '<tr><td colspan="4" class="empty-state">❌ Ошибка загрузки пользователей</td></tr>';
+                    document.getElementById('statsInfo').innerHTML = '👥 Ошибка загрузки';
+                    showToast('Не удалось загрузить пользователей', 'error');
+                    return [];
+                }
             }
-        }
-        window.openPasswordModal = (userId, userLogin) => {
-            closeModal();
-            const modal = document.createElement('div');
-            modal.className = 'modal-overlay';
-            modal.innerHTML = `
-                <div class="modal">
-                    <div class="modal-header">
-                        <h3>🔑 Смена пароля</h3>
-                        <button class="modal-close">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label>Пользователь</label>
-                            <input type="text" value="${escapeHtml(userLogin)}" disabled style="opacity:0.7;">
-                        </div>
-                        <div class="form-group">
-                            <label>Новый пароль</label>
-                            <input type="password" id="newPassword" placeholder="Введите новый пароль">
-                        </div>
-                        <div class="form-group">
-                            <label>Подтверждение пароля</label>
-                            <input type="password" id="confirmPassword" placeholder="Повторите пароль">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="modal-btn cancel">Отмена</button>
-                        <button class="modal-btn confirm">Сохранить</button>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(modal);
-            currentModal = modal;
-            modal.querySelector('.modal-close').onclick = closeModal;
-            modal.querySelector('.cancel').onclick = closeModal;
-            modal.querySelector('.confirm').onclick = async () => {
-                const newPassword = modal.querySelector('#newPassword').value;
-                const confirmPassword = modal.querySelector('#confirmPassword').value;
-                if (!newPassword) {
-                    showToast('Введите новый пароль', 'error');
+            function renderUsersTable(users) {
+                const tbody = document.getElementById('usersTableBody');
+                if (!users || users.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="empty-state">📭 Нет пользователей</td></tr>';
                     return;
                 }
-                if (newPassword !== confirmPassword) {
-                    showToast('Пароли не совпадают', 'error');
-                    return;
+                tbody.innerHTML = users.map(user => `
+                    <tr data-user-id="${user.id}">
+                        <td style="font-family: monospace; font-size: 0.75rem;">${user.id.substring(0, 8)}...</td>
+                        <td><strong>${escapeHtml(user.login)}</strong></td>
+                        <td>
+                            <span class="role-badge ${user.role === 'admin' ? 'role-admin' : 'role-user'}">
+                                ${user.role === 'admin' ? '👑 Администратор' : '👤 Пользователь'}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="action-buttons-cell">
+                                <button class="action-icon edit-password" onclick="window.openPasswordModal('${user.id}', '${escapeHtml(user.login)}')">
+                                    🔑 Сменить пароль
+                                </button>
+                                <button class="action-icon edit-role" onclick="window.openRoleModal('${user.id}', '${escapeHtml(user.login)}', '${user.role}')">
+                                    🎭 Сменить роль
+                                </button>
+                                <button class="action-icon delete" onclick="window.deleteUser('${user.id}', '${escapeHtml(user.login)}')">
+                                    🗑 Удалить
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+            function escapeHtml(str) {
+                if (!str) return '';
+                return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m]));
+            }
+            let currentModal = null;
+            function closeModal() {
+                if (currentModal) {
+                    currentModal.remove();
+                    currentModal = null;
                 }
-                if (newPassword.length < 4) {
-                    showToast('Пароль должен содержать минимум 4 символа', 'error');
-                    return;
+            }
+            async function createBackup() {
+                showLoading();
+                document.getElementById('statusMsg').innerHTML = '⏳ Создание бэкапа базы данных...';
+
+                try {
+                    const response = await fetch(CREATE_BACKUP_URL, {
+                        method: 'GET',
+                        credentials: 'include'
+                    });
+
+                    if (!response.ok) {
+                        let errorMsg = 'Ошибка при создании бэкапа';
+                        try {
+                            const errorText = await response.text();
+                            if (errorText) errorMsg = errorText;
+                        } catch (e) { }
+                        throw new Error(errorMsg);
+                    }
+                    const contentDisposition = response.headers.get('Content-Disposition');
+                    let filename = `backup_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.sql`;
+                    if (contentDisposition) {
+                        const match = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+                        if (match && match[1]) {
+                            filename = match[1].replace(/['"]/g, '');
+                        }
+                    }
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                    const backupDate = new Date().toLocaleString('ru-RU');
+                    document.getElementById('backupInfo').innerHTML = `✅ Последний бэкап создан: ${backupDate}`;
+                    document.getElementById('statusMsg').innerHTML = '✅ Бэкап успешно создан и скачан';
+                    showToast(`Бэкап базы данных "${filename}" успешно создан`, 'success');
+                } catch (error) {
+                    console.error('Backup error:', error);
+                    document.getElementById('statusMsg').innerHTML = '❌ Ошибка при создании бэкапа';
+                    showToast(error.message || 'Не удалось создать бэкап базы данных', 'error');
+                } finally {
+                    hideLoading();
                 }
-                await updatePassword(userId, userLogin, newPassword);
+            }
+            window.openPasswordModal = (userId, userLogin) => {
                 closeModal();
-            };
-        };
-        async function updatePassword(userId, login, newPassword) {
-            showLoading();
-            try {
-                const response = await fetch(UPDATE_PASSWORD_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify({
-                        id: userId,
-                        login: login,
-                        newPassword: newPassword
-                    })
-                });
-                if (response.ok) {
-                    showToast(`Пароль для ${login} успешно изменён`, 'success');
-                    document.getElementById('statusMsg').innerHTML = `✅ Пароль изменён для ${login}`;
-                } else if (response.status === 400) {
-                    const error = await response.text();
-                    showToast(error || 'Ошибка при смене пароля', 'error');
-                } else {
-                    throw new Error();
-                }
-            } catch (error) {
-                showToast('Не удалось изменить пароль', 'error');
-            } finally {
-                hideLoading();
-            }
-        }
-        window.openRoleModal = (userId, userLogin, currentRole) => {
-            closeModal();
-            const modal = document.createElement('div');
-            modal.className = 'modal-overlay';
-            modal.innerHTML = `
-                <div class="modal">
-                    <div class="modal-header">
-                        <h3>🎭 Смена роли</h3>
-                        <button class="modal-close">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label>Пользователь</label>
-                            <input type="text" value="${escapeHtml(userLogin)}" disabled style="opacity:0.7;">
+                const modal = document.createElement('div');
+                modal.className = 'modal-overlay';
+                modal.innerHTML = `
+                    <div class="modal">
+                        <div class="modal-header">
+                            <h3>🔑 Смена пароля</h3>
+                            <button class="modal-close">&times;</button>
                         </div>
-                        <div class="form-group">
-                            <label>Текущая роль</label>
-                            <input type="text" value="${currentRole === 'admin' ? 'Администратор' : 'Пользователь'}" disabled style="opacity:0.7;">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Пользователь</label>
+                                <input type="text" value="${escapeHtml(userLogin)}" disabled style="opacity:0.7;">
+                            </div>
+                            <div class="form-group">
+                                <label>Новый пароль</label>
+                                <input type="password" id="newPassword" placeholder="Введите новый пароль">
+                            </div>
+                            <div class="form-group">
+                                <label>Подтверждение пароля</label>
+                                <input type="password" id="confirmPassword" placeholder="Повторите пароль">
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label>Новая роль</label>
-                            <select id="newRole">
-                                <option value="user" ${currentRole === 'user' ? 'selected' : ''}>👤 Пользователь</option>
-                                <option value="admin" ${currentRole === 'admin' ? 'selected' : ''}>👑 Администратор</option>
-                            </select>
+                        <div class="modal-footer">
+                            <button class="modal-btn cancel">Отмена</button>
+                            <button class="modal-btn confirm">Сохранить</button>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button class="modal-btn cancel">Отмена</button>
-                        <button class="modal-btn confirm">Сохранить</button>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(modal);
-            currentModal = modal;
-            modal.querySelector('.modal-close').onclick = closeModal;
-            modal.querySelector('.cancel').onclick = closeModal;
-            modal.querySelector('.confirm').onclick = async () => {
-                const newRole = modal.querySelector('#newRole').value;
-                if (newRole === currentRole) {
-                    showToast('Роль не изменена', 'info');
+                `;
+                document.body.appendChild(modal);
+                currentModal = modal;
+                modal.querySelector('.modal-close').onclick = closeModal;
+                modal.querySelector('.cancel').onclick = closeModal;
+                modal.querySelector('.confirm').onclick = async () => {
+                    const newPassword = modal.querySelector('#newPassword').value;
+                    const confirmPassword = modal.querySelector('#confirmPassword').value;
+                    if (!newPassword) {
+                        showToast('Введите новый пароль', 'error');
+                        return;
+                    }
+                    if (newPassword !== confirmPassword) {
+                        showToast('Пароли не совпадают', 'error');
+                        return;
+                    }
+                    if (newPassword.length < 4) {
+                        showToast('Пароль должен содержать минимум 4 символа', 'error');
+                        return;
+                    }
+                    await updatePassword(userId, userLogin, newPassword);
                     closeModal();
-                    return;
-                }
-                await updateRole(userId, userLogin, newRole);
-                closeModal();
+                };
             };
-        };
-        async function updateRole(userId, login, newRole) {
-            showLoading();
-            try {
-                const response = await fetch(UPDATE_ROLE_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify({
-                        id: userId,
-                        login: login,
-                        newRole: newRole
-                    })
-                });
-                if (response.ok) {
-                    showToast(`Роль для ${login} изменена на ${newRole === 'admin' ? 'Администратор' : 'Пользователь'}`, 'success');
-                    await fetchUsers();
-                } else if (response.status === 400) {
-                    const error = await response.text();
-                    showToast(error || 'Ошибка при смене роли', 'error');
-                } else {
-                    throw new Error();
+            async function updatePassword(userId, login, newPassword) {
+                showLoading();
+                try {
+                    const response = await fetch(UPDATE_PASSWORD_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({
+                            id: userId,
+                            login: login,
+                            newPassword: newPassword
+                        })
+                    });
+                    if (response.ok) {
+                        showToast(`Пароль для ${login} успешно изменён`, 'success');
+                        document.getElementById('statusMsg').innerHTML = `✅ Пароль изменён для ${login}`;
+                    } else if (response.status === 400) {
+                        const error = await response.text();
+                        showToast(error || 'Ошибка при смене пароля', 'error');
+                    } else {
+                        throw new Error();
+                    }
+                } catch (error) {
+                    showToast('Не удалось изменить пароль', 'error');
+                } finally {
+                    hideLoading();
                 }
-            } catch (error) {
-                showToast('Не удалось изменить роль', 'error');
-            } finally {
-                hideLoading();
             }
-        }
-        window.deleteUser = (userId, userLogin) => {
-            closeModal();
-            const modal = document.createElement('div');
-            modal.className = 'modal-overlay';
-            modal.innerHTML = `
-                <div class="modal">
-                    <div class="modal-header">
-                        <h3>⚠️ Удаление пользователя</h3>
-                        <button class="modal-close">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <p style="color: #cbd5e1; margin-bottom: 1rem;">
-                            Вы действительно хотите удалить пользователя <strong>${escapeHtml(userLogin)}</strong>?
-                        </p>
-                        <p style="color: #f87171; font-size: 0.8rem;">Это действие необратимо.</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="modal-btn cancel">Отмена</button>
-                        <button class="modal-btn danger">Удалить</button>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(modal);
-            currentModal = modal;
-            modal.querySelector('.modal-close').onclick = closeModal;
-            modal.querySelector('.cancel').onclick = closeModal;
-            modal.querySelector('.danger').onclick = async () => {
-                await deleteUserRequest(userId, userLogin);
+            window.openRoleModal = (userId, userLogin, currentRole) => {
                 closeModal();
+                const modal = document.createElement('div');
+                modal.className = 'modal-overlay';
+                modal.innerHTML = `
+                    <div class="modal">
+                        <div class="modal-header">
+                            <h3>🎭 Смена роли</h3>
+                            <button class="modal-close">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Пользователь</label>
+                                <input type="text" value="${escapeHtml(userLogin)}" disabled style="opacity:0.7;">
+                            </div>
+                            <div class="form-group">
+                                <label>Текущая роль</label>
+                                <input type="text" value="${currentRole === 'admin' ? 'Администратор' : 'Пользователь'}" disabled style="opacity:0.7;">
+                            </div>
+                            <div class="form-group">
+                                <label>Новая роль</label>
+                                <select id="newRole">
+                                    <option value="user" ${currentRole === 'user' ? 'selected' : ''}>👤 Пользователь</option>
+                                    <option value="admin" ${currentRole === 'admin' ? 'selected' : ''}>👑 Администратор</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="modal-btn cancel">Отмена</button>
+                            <button class="modal-btn confirm">Сохранить</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+                currentModal = modal;
+                modal.querySelector('.modal-close').onclick = closeModal;
+                modal.querySelector('.cancel').onclick = closeModal;
+                modal.querySelector('.confirm').onclick = async () => {
+                    const newRole = modal.querySelector('#newRole').value;
+                    if (newRole === currentRole) {
+                        showToast('Роль не изменена', 'info');
+                        closeModal();
+                        return;
+                    }
+                    await updateRole(userId, userLogin, newRole);
+                    closeModal();
+                };
             };
-        };
-        async function deleteUserRequest(userId, userLogin) {
-            showLoading();
-            try {
-                const response = await fetch(DELETE_USER_URL, {
-                    method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify({ id: userId })
-                });
-                if (response.ok) {
-                    showToast(`Пользователь ${userLogin} удалён`, 'success');
-                    await fetchUsers();
-                } else if (response.status === 400) {
-                    const error = await response.text();
-                    showToast(error || 'Ошибка при удалении', 'error');
-                } else {
-                    throw new Error();
+            async function updateRole(userId, login, newRole) {
+                showLoading();
+                try {
+                    const response = await fetch(UPDATE_ROLE_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({
+                            id: userId,
+                            login: login,
+                            newRole: newRole
+                        })
+                    });
+                    if (response.ok) {
+                        showToast(`Роль для ${login} изменена на ${newRole === 'admin' ? 'Администратор' : 'Пользователь'}`, 'success');
+                        await fetchUsers();
+                    } else if (response.status === 400) {
+                        const error = await response.text();
+                        showToast(error || 'Ошибка при смене роли', 'error');
+                    } else {
+                        throw new Error();
+                    }
+                } catch (error) {
+                    showToast('Не удалось изменить роль', 'error');
+                } finally {
+                    hideLoading();
                 }
-            } catch (error) {
-                showToast('Не удалось удалить пользователя', 'error');
-            } finally {
+            }
+            window.deleteUser = (userId, userLogin) => {
+                closeModal();
+                const modal = document.createElement('div');
+                modal.className = 'modal-overlay';
+                modal.innerHTML = `
+                    <div class="modal">
+                        <div class="modal-header">
+                            <h3>⚠️ Удаление пользователя</h3>
+                            <button class="modal-close">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <p style="color: #cbd5e1; margin-bottom: 1rem;">
+                                Вы действительно хотите удалить пользователя <strong>${escapeHtml(userLogin)}</strong>?
+                            </p>
+                            <p style="color: #f87171; font-size: 0.8rem;">Это действие необратимо.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="modal-btn cancel">Отмена</button>
+                            <button class="modal-btn danger">Удалить</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+                currentModal = modal;
+                modal.querySelector('.modal-close').onclick = closeModal;
+                modal.querySelector('.cancel').onclick = closeModal;
+                modal.querySelector('.danger').onclick = async () => {
+                    await deleteUserRequest(userId, userLogin);
+                    closeModal();
+                };
+            };
+            async function deleteUserRequest(userId, userLogin) {
+                showLoading();
+                try {
+                    const response = await fetch(DELETE_USER_URL, {
+                        method: 'DELETE',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({ id: userId })
+                    });
+                    if (response.ok) {
+                        showToast(`Пользователь ${userLogin} удалён`, 'success');
+                        await fetchUsers();
+                    } else if (response.status === 400) {
+                        const error = await response.text();
+                        showToast(error || 'Ошибка при удалении', 'error');
+                    } else {
+                        throw new Error();
+                    }
+                } catch (error) {
+                    showToast('Не удалось удалить пользователя', 'error');
+                } finally {
+                    hideLoading();
+                }
+            }
+            document.getElementById('refreshUsersBtn').addEventListener('click', async () => {
+                showLoading();
+                await fetchUsers();
                 hideLoading();
-            }
-        }
-        document.getElementById('refreshUsersBtn').addEventListener('click', async () => {
-            showLoading();
-            await fetchUsers();
-            hideLoading();
-        });
-        document.getElementById('logoutBtn').addEventListener('click', async () => {
-            try {
-                const response = await fetch('/logout', { method: 'GET', credentials: 'include' });
-                if (response.ok) {
-                    showToast('Выход выполнен', 'success');
-                    setTimeout(() => { window.location.href = '/page/login'; }, 500);
-                } else {
-                    showToast('Ошибка при выходе', 'error');
+            });
+            document.getElementById('createBackupBtn').addEventListener('click', createBackup);
+            document.getElementById('logoutBtn').addEventListener('click', async () => {
+                try {
+                    const response = await fetch('/logout', { method: 'GET', credentials: 'include' });
+                    if (response.ok) {
+                        showToast('Выход выполнен', 'success');
+                        setTimeout(() => { window.location.href = '/page/login'; }, 500);
+                    } else {
+                        showToast('Ошибка при выходе', 'error');
+                    }
+                } catch {
+                    showToast('Не удалось выполнить выход', 'error');
                 }
-            } catch {
-                showToast('Не удалось выполнить выход', 'error');
-            }
-        });
-        function loadUserInfo() {
-            const email = getEmailFromJwt();
-            if (email) {
-                document.getElementById('userName').textContent = email.split('@')[0];
-                document.getElementById('userAvatar').textContent = email.charAt(0).toUpperCase();
-            }
-        }
-        function getEmailFromJwt() {
-            const cookies = document.cookie.split(';');
-            let jwtToken = null;
-            for (let cookie of cookies) {
-                const [name, value] = cookie.trim().split('=');
-                if (name === 'jwt') {
-                    jwtToken = value;
-                    break;
+            });
+            function loadUserInfo() {
+                const email = getEmailFromJwt();
+                if (email) {
+                    document.getElementById('userName').textContent = email.split('@')[0];
+                    document.getElementById('userAvatar').textContent = email.charAt(0).toUpperCase();
                 }
             }
-            if (!jwtToken) return null;
-            try {
-                const parts = jwtToken.split('.');
-                if (parts.length !== 3) return null;
-                const payload = JSON.parse(atob(parts[1]));
-                return payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress']
-                    || payload['email'] || payload['Email'] || payload['unique_name'] || null;
-            } catch { return null; }
-        }
-        loadUserInfo();
-        fetchUsers();
-    })();
+            function getEmailFromJwt() {
+                const cookies = document.cookie.split(';');
+                let jwtToken = null;
+                for (let cookie of cookies) {
+                    const [name, value] = cookie.trim().split('=');
+                    if (name === 'jwt') {
+                        jwtToken = value;
+                        break;
+                    }
+                }
+                if (!jwtToken) return null;
+                try {
+                    const parts = jwtToken.split('.');
+                    if (parts.length !== 3) return null;
+                    const payload = JSON.parse(atob(parts[1]));
+                    return payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress']
+                        || payload['email'] || payload['Email'] || payload['unique_name'] || null;
+                } catch { return null; }
+            }
+            loadUserInfo();
+            fetchUsers();
+        })();
     </script>
 </body>
 </html>
