@@ -3,653 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <link rel="stylesheet" href="../Styles/MainPage.css">
     <title>DarkForge Pro · Конструктор с контейнерами</title>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            background: #05070c;
-            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, 'Roboto', sans-serif;
-            padding: 20px;
-            min-height: 100vh;
-        }
-
-        .constructor {
-            max-width: 1900px;
-            margin: 0 auto;
-            background: #0b0e15;
-            border-radius: 2rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255,255,255,0.03);
-            overflow: hidden;
-            border: 1px solid #232734;
-        }
-
-        .brand-header {
-            background: linear-gradient(135deg, #0a0d16 0%, #11161f 100%);
-            padding: 1rem 2rem;
-            border-bottom: 1px solid #2a2f3e;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .logo-icon {
-            font-size: 1.8rem;
-            background: linear-gradient(145deg, #a78bfa, #8b5cf6);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .brand-title {
-            font-size: 1.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #f0f3ff, #c4b5fd);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .brand-sub {
-            font-size: 0.7rem;
-            color: #7e8aa2;
-            background: #0f1220;
-            padding: 4px 12px;
-            border-radius: 40px;
-        }
-
-        .project-info {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            background: #0a0d16;
-            padding: 8px 20px;
-            border-radius: 40px;
-            border: 1px solid #2d3448;
-        }
-
-        .project-name-display {
-            color: #e2e8f0;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .save-status {
-            font-size: 0.7rem;
-            padding: 4px 12px;
-            border-radius: 20px;
-        }
-
-            .save-status.saved {
-                background: rgba(74, 222, 128, 0.2);
-                color: #4ade80;
-            }
-
-            .save-status.saving {
-                background: rgba(251, 191, 36, 0.2);
-                color: #fbbf24;
-            }
-
-            .save-status.error {
-                background: rgba(239, 68, 68, 0.2);
-                color: #f87171;
-            }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            background: #0a0d16;
-            padding: 8px 20px;
-            border-radius: 40px;
-            border: 1px solid #2d3448;
-        }
-
-        .user-avatar {
-            width: 36px;
-            height: 36px;
-            background: linear-gradient(135deg, #8b5cf6, #6d28d9);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1rem;
-            text-transform: uppercase;
-        }
-
-        .user-name {
-            color: #e2e8f0;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .logout-link {
-            color: #f87171;
-            font-size: 0.75rem;
-            cursor: pointer;
-            text-decoration: underline;
-            transition: 0.2s;
-        }
-
-            .logout-link:hover {
-                color: #ff9999;
-            }
-
-        .quick-bar {
-            background: #0f121c;
-            padding: 0.8rem 1.5rem;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 1.5rem;
-            justify-content: space-between;
-            border-bottom: 1px solid #262d3d;
-        }
-
-        .tool-group {
-            display: flex;
-            gap: 0.8rem;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .tool-btn {
-            background: #1a1f2c;
-            border: none;
-            color: #eef2ff;
-            font-weight: 500;
-            font-size: 0.75rem;
-            padding: 0.5rem 1rem;
-            border-radius: 2rem;
-            cursor: pointer;
-            transition: 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-            .tool-btn:hover {
-                background: #2d344a;
-                transform: translateY(-1px);
-            }
-
-            .tool-btn.primary {
-                background: #3b82f6;
-            }
-
-                .tool-btn.primary:hover {
-                    background: #2563eb;
-                }
-
-            .tool-btn.warning {
-                background: #ef4444;
-            }
-
-                .tool-btn.warning:hover {
-                    background: #dc2626;
-                }
-
-            .tool-btn.success {
-                background: #10b981;
-            }
-
-                .tool-btn.success:hover {
-                    background: #059669;
-                }
-
-            .tool-btn.projects {
-                background: #8b5cf6;
-            }
-
-                .tool-btn.projects:hover {
-                    background: #7c3aed;
-                }
-
-        .drag-info {
-            background: #1e2436;
-            padding: 5px 14px;
-            border-radius: 40px;
-            font-size: 0.7rem;
-            color: #a5b4fc;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-            .drag-info::before {
-                content: "⋮⋮";
-                font-size: 1rem;
-                letter-spacing: 2px;
-            }
-
-        .bg-control {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: #0a0d16;
-            padding: 0 12px;
-            border-radius: 40px;
-        }
-
-        .bg-label {
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: #b9c3db;
-        }
-
-        .color-input {
-            width: 36px;
-            height: 36px;
-            border: 2px solid #5b6e8c;
-            border-radius: 12px;
-            cursor: pointer;
-            background: #0f1117;
-        }
-
-        .status-msg {
-            font-size: 0.7rem;
-            background: #1e2436;
-            padding: 5px 14px;
-            border-radius: 40px;
-            color: #a5b4fc;
-        }
-
-        .workspace {
-            display: flex;
-            gap: 1.5rem;
-            flex-wrap: wrap;
-            padding: 1.5rem;
-        }
-
-        .canvas {
-            flex: 3;
-            min-width: 500px;
-            background: #080b12;
-            border-radius: 1.5rem;
-            padding: 1rem;
-            border: 1px solid #252b38;
-        }
-
-        .site-preview {
-            background: #0c0f17;
-            border-radius: 1.2rem;
-            overflow-y: auto;
-            max-height: 68vh;
-            min-height: 560px;
-            color: #e2e8f0;
-        }
-
-            .site-preview .container-block {
-                border: 2px dashed #4c3a6e;
-                background: rgba(76, 58, 110, 0.1);
-                border-radius: 16px;
-                padding: 16px;
-                margin: 8px 0;
-                transition: all 0.2s;
-                min-height: 80px;
-            }
-
-                .site-preview .container-block:hover {
-                    border-color: #8b5cf6;
-                    background: rgba(139, 92, 246, 0.05);
-                }
-
-                .site-preview .container-block .container-label {
-                    font-size: 0.6rem;
-                    color: #a78bfa;
-                    margin-bottom: 8px;
-                    opacity: 0.7;
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                }
-
-                    .site-preview .container-block .container-label::before {
-                        content: "📦";
-                        font-size: 0.7rem;
-                    }
-
-            .site-preview .flex-row {
-                display: flex;
-                flex-direction: row;
-                gap: 16px;
-                flex-wrap: wrap;
-                background: #131a26;
-                border-radius: 16px;
-                padding: 16px;
-                border: 1px solid #2e3a4e;
-                margin: 8px 0;
-            }
-
-            .site-preview .flex-col {
-                display: flex;
-                flex-direction: column;
-                gap: 12px;
-                background: #131a26;
-                border-radius: 16px;
-                padding: 16px;
-                border: 1px solid #2e3a4e;
-                margin: 8px 0;
-            }
-
-            .site-preview .draggable-element {
-                cursor: grab;
-            }
-
-                .site-preview .draggable-element:active {
-                    cursor: grabbing;
-                }
-
-            .site-preview .sortable-ghost {
-                opacity: 0.4;
-                background: #2d3448;
-                border: 2px dashed #8b5cf6;
-            }
-
-            .site-preview .editable-element {
-                outline: 2px solid #c084fc;
-                outline-offset: 3px;
-                background-color: rgba(139, 92, 246, 0.1);
-                border-radius: 8px;
-            }
-
-        .properties-panel {
-            flex: 1.2;
-            min-width: 340px;
-            background: #0c0f18;
-            border-radius: 1.5rem;
-            border: 1px solid #252d3c;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .tabs-header {
-            display: flex;
-            border-bottom: 1px solid #262e3e;
-            background: #0a0d14;
-            padding: 0 0.8rem;
-            gap: 0.2rem;
-        }
-
-        .tab-btn {
-            background: transparent;
-            border: none;
-            padding: 0.9rem 1.2rem;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #9ca3af;
-            cursor: pointer;
-            border-radius: 1rem 1rem 0 0;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-            .tab-btn.active {
-                color: #c084fc;
-                background: #0f121f;
-                border-bottom: 2px solid #a78bfa;
-            }
-
-        .tab-content {
-            flex: 1;
-            padding: 1.2rem;
-            overflow-y: auto;
-            max-height: 62vh;
-        }
-
-        .tab-pane {
-            display: none;
-        }
-
-            .tab-pane.active-pane {
-                display: block;
-            }
-
-        .prop-group {
-            margin-bottom: 1rem;
-        }
-
-            .prop-group label {
-                display: block;
-                font-weight: 600;
-                font-size: 0.7rem;
-                color: #9ca3af;
-                margin-bottom: 5px;
-            }
-
-            .prop-group input,
-            .prop-group select,
-            .prop-group textarea {
-                width: 100%;
-                padding: 8px 12px;
-                border-radius: 14px;
-                border: 1px solid #2d3445;
-                background: #010101;
-                color: #f0f3fa;
-                font-size: 0.8rem;
-            }
-
-        .spacing-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            margin-top: 4px;
-        }
-
-        .spacing-item {
-            text-align: center;
-        }
-
-            .spacing-item input {
-                text-align: center;
-                padding: 8px 4px;
-                font-size: 0.75rem;
-            }
-
-            .spacing-item label {
-                font-size: 0.6rem;
-                margin-bottom: 2px;
-                color: #7e8aa2;
-            }
-
-        .delete-btn {
-            background: #201c2c;
-            border: 1px solid #4c3a6e;
-            width: 100%;
-            padding: 10px;
-            border-radius: 40px;
-            font-weight: bold;
-            cursor: pointer;
-            color: #f9acac;
-            margin-top: 10px;
-        }
-
-            .delete-btn:hover {
-                background: #2f2340;
-            }
-
-        .empty-state {
-            text-align: center;
-            padding: 30px 16px;
-            color: #5f6c84;
-        }
-
-        .elements-library {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .lib-category {
-            background: #0a0d16;
-            border-radius: 1.2rem;
-            padding: 0.8rem;
-            border-left: 3px solid #8b5cf6;
-        }
-
-        .lib-title {
-            color: #cbd5ff;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            font-weight: 700;
-            margin-bottom: 0.7rem;
-        }
-
-        .lib-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.6rem;
-        }
-
-        .element-card {
-            background: #131824;
-            border: 1px solid #2a3142;
-            border-radius: 1rem;
-            padding: 0.5rem 0.9rem;
-            font-size: 0.75rem;
-            cursor: pointer;
-            transition: 0.15s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            color: #e2e8f0;
-        }
-
-            .element-card:hover {
-                background: #2d3448;
-                transform: scale(0.96);
-                border-color: #a78bfa;
-            }
-
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 1000;
-            max-width: 350px;
-            padding: 12px 20px;
-            border-radius: 1rem;
-            font-size: 0.85rem;
-            animation: slideInRight 0.3s ease;
-        }
-
-        .toast-error {
-            background: rgba(239, 68, 68, 0.95);
-            color: white;
-        }
-
-        .toast-success {
-            background: rgba(74, 222, 128, 0.95);
-            color: #1a1f2c;
-        }
-
-        @keyframes slideInRight {
-            from {
-                opacity: 0;
-                transform: translateX(100px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(8px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(139, 92, 246, 0.3);
-            border-radius: 50%;
-            border-top-color: #8b5cf6;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        .default-container {
-            padding: 28px;
-            text-align: center;
-            background: linear-gradient(135deg, #10141f, #070a10);
-            border-radius: 32px;
-            margin: 20px;
-        }
-
-            .default-container h2 {
-                color: #e0e7ff;
-                font-size: 2rem;
-                margin: 16px 0;
-            }
-
-            .default-container p {
-                color: #b9c3db;
-                margin: 12px 0;
-            }
-
-        .default-button {
-            background: #8b5cf6;
-            border: none;
-            padding: 10px 28px;
-            border-radius: 60px;
-            cursor: pointer;
-            color: white;
-        }
-
-        .features-row {
-            display: flex;
-            gap: 16px;
-            padding: 10px;
-        }
-
-        .feature-card {
-            flex: 1;
-            background: #10151f;
-            border-radius: 24px;
-            padding: 18px;
-        }
-
-            .feature-card h3 {
-                color: #e2e8f0;
-                margin-bottom: 8px;
-            }
-
-            .feature-card p {
-                color: #cbd5e6;
-            }
-    </style>
 </head>
 <body>
     <div class="constructor">
@@ -657,7 +13,7 @@
             <div class="logo-area">
                 <div class="logo-icon">🎨⚡</div>
                 <div class="brand-title">DarkForge Pro</div>
-                <div class="brand-sub">Drag & Drop · Контейнеры и вложенность</div>
+                <div class="brand-sub">Drag & Drop</div>
             </div>
             <div class="project-info">
                 <span class="project-name-display" id="projectNameSpan">Новый проект</span>
@@ -669,7 +25,6 @@
                 <span class="logout-link" id="logoutBtn">Выйти</span>
             </div>
         </div>
-
         <div class="quick-bar">
             <div class="tool-group">
                 <button class="tool-btn projects" id="backToProjectsBtn">📁 Мои проекты</button>
@@ -684,13 +39,12 @@
             </div>
             <div class="status-msg" id="statusMsg">🎯 Выберите элемент</div>
         </div>
-
         <div class="workspace">
-            <div class="canvas">
+            <div class="canvas" id="canvasArea">
                 <div class="site-preview" id="sitePreview"></div>
             </div>
-
-            <div class="properties-panel">
+            <div class="properties-panel" id="propertiesPanel">
+                <div class="panel-toggle" id="panelToggle">◀</div>
                 <div class="tabs-header">
                     <button class="tab-btn active" data-tab="editor">🎨 Редактор элемента</button>
                     <button class="tab-btn" data-tab="library">📦 Добавить элементы</button>
@@ -755,7 +109,6 @@
             </div>
         </div>
     </div>
-
     <script>
         (function () {
             const preview = document.getElementById('sitePreview');
@@ -769,29 +122,51 @@
             const projectNameSpan = document.getElementById('projectNameSpan');
             const saveStatusSpan = document.getElementById('saveStatusSpan');
             const backToProjectsBtn = document.getElementById('backToProjectsBtn');
-
+            const propertiesPanel = document.getElementById('propertiesPanel');
+            const panelToggle = document.getElementById('panelToggle');
+            const canvasArea = document.getElementById('canvasArea');
             let selectedElement = null;
             let currentProjectId = null;
             let saveTimeout = null;
-
+            let isPanelCollapsed = false;
             const projectId = sessionStorage.getItem('currentProjectId');
             const projectName = sessionStorage.getItem('currentProjectName');
+            function togglePanel() {
+                isPanelCollapsed = !isPanelCollapsed;
 
+                if (isPanelCollapsed) {
+                    propertiesPanel.classList.add('collapsed');
+                    panelToggle.innerHTML = '▶';
+                    canvasArea.style.flex = '1';
+                } else {
+                    propertiesPanel.classList.remove('collapsed');
+                    panelToggle.innerHTML = '◀';
+                    canvasArea.style.flex = '3';
+                }
+
+                localStorage.setItem('panelCollapsed', isPanelCollapsed);
+            }
+            panelToggle.addEventListener('click', togglePanel);
+            const savedState = localStorage.getItem('panelCollapsed');
+            if (savedState === 'true') {
+                isPanelCollapsed = true;
+                propertiesPanel.classList.add('collapsed');
+                panelToggle.innerHTML = '▶';
+                canvasArea.style.flex = '1';
+            }
             function showToast(message, isError = false) {
                 const toast = document.createElement('div');
-                toast.className = `toast ${isError ? 'toast-error' : 'toast-success'}`;
+                toast.className = 'toast ' + (isError ? 'toast-error' : 'toast-success');
                 toast.textContent = message;
                 document.body.appendChild(toast);
-                setTimeout(() => toast.remove(), 3000);
+                setTimeout(function () { toast.remove(); }, 3000);
             }
-
             function updateSaveStatus(status, text) {
-                saveStatusSpan.className = `save-status ${status}`;
+                saveStatusSpan.className = 'save-status ' + status;
                 saveStatusSpan.textContent = text;
             }
-
             function showLoading() {
-                let overlay = document.getElementById('loadingOverlay');
+                var overlay = document.getElementById('loadingOverlay');
                 if (!overlay) {
                     overlay = document.createElement('div');
                     overlay.id = 'loadingOverlay';
@@ -800,90 +175,75 @@
                     document.body.appendChild(overlay);
                 }
             }
-
             function hideLoading() {
-                const overlay = document.getElementById('loadingOverlay');
+                var overlay = document.getElementById('loadingOverlay');
                 if (overlay) overlay.remove();
             }
-
-            function decodeUnicode(str) {
-                if (!str) return '';
-                return str.replace(/\\u([0-9A-Fa-f]{4})/g, function (match, grp) {
-                    return String.fromCharCode(parseInt(grp, 16));
-                });
-            }
-
             function cleanHtmlBeforeSave(html) {
                 if (!html) return '';
-
-                const tempDiv = document.createElement('div');
+                var tempDiv = document.createElement('div');
                 tempDiv.innerHTML = html;
-
-                const allElements = tempDiv.querySelectorAll('*');
-                allElements.forEach(el => {
-                    el.classList.remove('editable-element', 'sortable-ghost', 'sortable-drag');
+                var allElements = tempDiv.querySelectorAll('*');
+                for (var i = 0; i < allElements.length; i++) {
+                    var el = allElements[i];
+                    el.classList.remove('editable-element', 'sortable-ghost', 'sortable-drag', 'draggable-element');
                     if (el.classList.length === 0) el.removeAttribute('class');
-                });
-
-                let cleaned = tempDiv.innerHTML;
-                cleaned = cleaned.replace(/cursor:\s*grab;?/gi, '');
-                cleaned = cleaned.replace(/\s+style=""/g, '');
-                cleaned = cleaned.replace(/\s+class=""/g, '');
-
+                    el.removeAttribute('style');
+                }
+                var cleaned = tempDiv.innerHTML;
+                cleaned = cleaned.replace(/\n\s*/g, '');
+                cleaned = cleaned.replace(/\s+/g, ' ');
+                cleaned = cleaned.replace(/>\s+</g, '><');
+                cleaned = cleaned.trim();
                 return cleaned;
             }
-
+            function removeSurroundingQuotes(str) {
+                if (!str) return str;
+                if ((str.startsWith('"') && str.endsWith('"')) || (str.startsWith("'") && str.endsWith("'"))) {
+                    return str.substring(1, str.length - 1);
+                }
+                return str;
+            }
+            function repairCorruptedHtml(html) {
+                if (!html) return html;
+                var repaired = html;
+                repaired = removeSurroundingQuotes(repaired);
+                repaired = repaired.replace(/\\n/g, '');
+                repaired = repaired.replace(/\\r/g, '');
+                repaired = repaired.replace(/\\t/g, '');
+                repaired = repaired.replace(/\\"/g, '"');
+                repaired = repaired.replace(/&quot;/g, '"');
+                repaired = repaired.replace(/class="\\?"/g, '');
+                repaired = repaired.replace(/\s+class="\s*"/g, '');
+                repaired = repaired.replace(/\s+style="\s*"/g, '');
+                repaired = repaired.replace(/\\u([0-9A-Fa-f]{4})/g, function (match, grp) {
+                    return String.fromCharCode(parseInt(grp, 16));
+                });
+                return repaired;
+            }
             function isValidHtml(html) {
                 if (!html || typeof html !== 'string') return false;
-                const trimmed = html.trim();
+                var trimmed = html.trim();
                 if (trimmed === '' || trimmed === 'null' || trimmed === 'undefined') return false;
-                if (trimmed === '""' || trimmed === "''" || trimmed === '" "' || trimmed === '  ') return false;
                 if (trimmed.length < 50) return false;
-                if (trimmed.includes('"1" "1" "1"')) return false;
-                if (trimmed.includes('\\uD')) return true;
-
-                const hasValidTags = trimmed.includes('<div') || trimmed.includes('<h1') ||
-                    trimmed.includes('<p') || trimmed.includes('class="default-container"') ||
-                    trimmed.includes('<button') || trimmed.includes('<span');
+                var hasValidTags = trimmed.indexOf('<div') !== -1 || trimmed.indexOf('<h1') !== -1 ||
+                    trimmed.indexOf('<p') !== -1 || trimmed.indexOf('class="default-container"') !== -1;
                 return hasValidTags;
             }
-
             function getDefaultHtml() {
-                return `
-                        <div class="default-container">
-                            <h2>⚡ DarkForge Pro с контейнерами</h2>
-                            <p>🎯 Добавьте контейнер и перетащите в него элементы!</p>
-                            <button class="default-button">✨ Попробуй</button>
-                        </div>
-                        <div class="features-row">
-                            <div class="feature-card">
-                                <h3>📦 Контейнеры</h3>
-                                <p>Добавляйте блоки и вкладывайте элементы</p>
-                            </div>
-                            <div class="feature-card">
-                                <h3>🎨 Перетаскивание</h3>
-                                <p>Элементы можно перемещать внутри контейнеров</p>
-                            </div>
-                        </div>
-                    `;
+                return '<div class="default-container"><h2>⚡ DarkForge Pro с контейнерами</h2><p>🎯 Добавьте контейнер и перетащите в него элементы!</p><button class="default-button">✨ Попробуй</button></div><div class="features-row"><div class="feature-card"><h3>📦 Контейнеры</h3><p>Добавляйте блоки и вкладывайте элементы</p></div><div class="feature-card"><h3>🎨 Перетаскивание</h3><p>Элементы можно перемещать внутри контейнеров</p></div></div>';
             }
-
             async function saveProjectToDatabase() {
                 if (!currentProjectId) return;
-
-                let htmlToSave = preview.innerHTML;
-
+                var htmlToSave = preview.innerHTML;
                 if (!htmlToSave || htmlToSave.trim() === '' || htmlToSave.length < 50) {
                     htmlToSave = getDefaultHtml();
                     preview.innerHTML = htmlToSave;
                 }
-
                 htmlToSave = cleanHtmlBeforeSave(htmlToSave);
-
                 updateSaveStatus('saving', '● Сохранение...');
-
                 try {
-                    const response = await fetch('/project/html/update', {
+                    var response = await fetch('/project/html/update', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json; charset=utf-8',
@@ -896,12 +256,11 @@
                             textHtml: htmlToSave
                         })
                     });
-
                     if (response.ok) {
                         updateSaveStatus('saved', '● Сохранено');
                         showToast('Проект сохранён', false);
                     } else if (response.status === 400) {
-                        const errorText = await response.text();
+                        var errorText = await response.text();
                         showToast(errorText || 'Ошибка сохранения', true);
                         updateSaveStatus('error', '⚠ Ошибка');
                     } else {
@@ -913,33 +272,28 @@
                     updateSaveStatus('error', '⚠ Ошибка');
                 }
             }
-
             function handleContentChange() {
                 if (currentProjectId) {
                     if (saveTimeout) clearTimeout(saveTimeout);
                     updateSaveStatus('saving', '● Есть изменения');
-                    saveTimeout = setTimeout(() => {
+                    saveTimeout = setTimeout(function () {
                         saveProjectToDatabase();
                     }, 10000);
                 }
             }
-
             async function loadProjectFromDatabase(id, name) {
                 showLoading();
                 updateSaveStatus('saving', '● Загрузка...');
-
                 try {
-                    const response = await fetch('/project/html', {
+                    var response = await fetch('/project/html', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         credentials: 'include',
                         body: JSON.stringify({ id: id })
                     });
-
                     if (response.ok) {
-                        let htmlContent = await response.text();
-                        htmlContent = decodeUnicode(htmlContent);
-
+                        var htmlContent = await response.text();
+                        htmlContent = repairCorruptedHtml(htmlContent);
                         if (isValidHtml(htmlContent)) {
                             preview.innerHTML = htmlContent;
                         } else {
@@ -947,14 +301,13 @@
                             preview.innerHTML = getDefaultHtml();
                             await saveProjectToDatabase();
                         }
-
-                        projectNameSpan.textContent = name || `Проект ${id.substring(0, 8)}`;
+                        projectNameSpan.textContent = name || ('Проект ' + id.substring(0, 8));
                         currentProjectId = id;
                         updateSaveStatus('saved', '● Загружено');
                         showToast('Проект загружен', false);
                     } else if (response.status === 404) {
                         preview.innerHTML = getDefaultHtml();
-                        projectNameSpan.textContent = name || `Проект ${id.substring(0, 8)}`;
+                        projectNameSpan.textContent = name || ('Проект ' + id.substring(0, 8));
                         currentProjectId = id;
                         updateSaveStatus('saved', '● Новый проект');
                         showToast('Создан новый проект', false);
@@ -974,26 +327,28 @@
                     initDragAndDrop();
                 }
             }
-
             function getEmailFromJwt() {
-                const cookies = document.cookie.split(';');
-                for (let cookie of cookies) {
-                    const [name, value] = cookie.trim().split('=');
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    var eqIndex = cookie.indexOf('=');
+                    if (eqIndex === -1) continue;
+                    var name = cookie.substring(0, eqIndex);
+                    var value = cookie.substring(eqIndex + 1);
                     if (name === 'jwt') {
                         try {
-                            const parts = value.split('.');
+                            var parts = value.split('.');
                             if (parts.length !== 3) return null;
-                            const payload = JSON.parse(atob(parts[1]));
+                            var payload = JSON.parse(atob(parts[1]));
                             return payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress']
                                 || payload['email'] || payload['Email'] || null;
-                        } catch { return null; }
+                        } catch (e) { return null; }
                     }
                 }
                 return null;
             }
-
             function loadUserInfo() {
-                const email = getEmailFromJwt();
+                var email = getEmailFromJwt();
                 if (email) {
                     userNameSpan.textContent = email;
                     userAvatarSpan.textContent = email.charAt(0).toUpperCase();
@@ -1002,42 +357,42 @@
                     userAvatarSpan.textContent = '?';
                 }
             }
-
             async function logout() {
                 if (!confirm('Вы уверены, что хотите выйти?')) return;
                 try {
-                    const response = await fetch('/logout', { method: 'GET', credentials: 'include' });
+                    var response = await fetch('/logout', { method: 'GET', credentials: 'include' });
                     if (response.ok) {
                         showToast('Выход выполнен успешно', false);
-                        setTimeout(() => { window.location.href = '/page/login'; }, 500);
+                        setTimeout(function () { window.location.href = '/page/login'; }, 500);
                     } else {
                         showToast('Ошибка при выходе', true);
                     }
-                } catch { showToast('Не удалось выполнить выход', true); }
+                } catch (e) { showToast('Не удалось выполнить выход', true); }
             }
-
             function goBackToProjects() {
                 if (confirm('Сохранить изменения перед выходом?')) {
                     if (saveTimeout) {
                         clearTimeout(saveTimeout);
                         saveProjectToDatabase();
                     }
-                    setTimeout(() => {
+                    setTimeout(function () {
                         window.location.href = '/page/projects';
                     }, 500);
                 } else {
                     window.location.href = '/page/projects';
                 }
             }
-
             function initDragAndDrop() {
-                const containers = [preview, ...preview.querySelectorAll('.container-block, .flex-row, .flex-col, .card')];
-
-                containers.forEach(container => {
-                    if (container === preview || container.classList?.contains('container-block') ||
-                        container.classList?.contains('flex-row') || container.classList?.contains('flex-col') ||
-                        container.classList?.contains('card')) {
-
+                var containers = [preview];
+                var containerBlocks = preview.querySelectorAll('.container-block, .flex-row, .flex-col, .card');
+                for (var i = 0; i < containerBlocks.length; i++) {
+                    containers.push(containerBlocks[i]);
+                }
+                for (var i = 0; i < containers.length; i++) {
+                    var container = containers[i];
+                    if (container === preview || container.classList && (container.classList.contains('container-block') ||
+                        container.classList.contains('flex-row') || container.classList.contains('flex-col') ||
+                        container.classList.contains('card'))) {
                         new Sortable(container, {
                             group: 'shared',
                             animation: 350,
@@ -1054,38 +409,40 @@
                             supportPointer: true
                         });
                     }
-                });
+                }
             }
-
             function attachGlobalEventListeners() {
-                const allElements = preview.querySelectorAll('*');
-                allElements.forEach(el => {
+                var allElements = preview.querySelectorAll('*');
+                for (var i = 0; i < allElements.length; i++) {
+                    var el = allElements[i];
                     el.removeEventListener('click', handleElementClick);
                     el.addEventListener('click', handleElementClick);
-                    if (!el.classList?.contains('container-label')) {
+                    if (!el.classList || !el.classList.contains('container-label')) {
                         el.classList.add('draggable-element');
                     }
-                });
+                }
             }
-
             function handleElementClick(e) {
                 e.stopPropagation();
                 if (selectedElement) selectedElement.classList.remove('editable-element');
                 selectedElement = e.target;
-                if (selectedElement.classList?.contains('container-label')) {
+                if (selectedElement.classList && selectedElement.classList.contains('container-label')) {
                     selectedElement = selectedElement.parentElement;
                 }
                 selectedElement.classList.add('editable-element');
                 updatePropertiesPanel();
                 switchTab('editor');
             }
-
-            const tabBtns = document.querySelectorAll('.tab-btn');
-            const panes = { editor: document.getElementById('editorPane'), library: document.getElementById('libraryPane') };
-
+            var tabBtns = document.querySelectorAll('.tab-btn');
+            var panes = { editor: document.getElementById('editorPane'), library: document.getElementById('libraryPane') };
             function switchTab(tabId) {
-                tabBtns.forEach(btn => btn.classList.remove('active'));
-                document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active-pane'));
+                for (var i = 0; i < tabBtns.length; i++) {
+                    tabBtns[i].classList.remove('active');
+                }
+                var panesList = document.querySelectorAll('.tab-pane');
+                for (var i = 0; i < panesList.length; i++) {
+                    panesList[i].classList.remove('active-pane');
+                }
                 if (tabId === 'editor') {
                     document.querySelector('[data-tab="editor"]').classList.add('active');
                     panes.editor.classList.add('active-pane');
@@ -1094,140 +451,139 @@
                     panes.library.classList.add('active-pane');
                 }
             }
-
-            tabBtns.forEach(btn => btn.addEventListener('click', () => switchTab(btn.getAttribute('data-tab'))));
-
-            function getRealColorHex(colorValue, defaultHex = '#1e1e2e') {
+            for (var i = 0; i < tabBtns.length; i++) {
+                tabBtns[i].addEventListener('click', function (btn) {
+                    return function () { switchTab(btn.getAttribute('data-tab')); };
+                }(tabBtns[i]));
+            }
+            function getRealColorHex(colorValue, defaultHex) {
+                defaultHex = defaultHex || '#1e1e2e';
                 if (!colorValue || colorValue === 'rgba(0,0,0,0)' || colorValue === 'transparent') return defaultHex;
-                if (colorValue.startsWith('#')) return colorValue;
-                const match = colorValue.match(/\d+/g);
+                if (colorValue.charAt(0) === '#') return colorValue;
+                var match = colorValue.match(/\d+/g);
                 if (match && match.length >= 3) {
                     return '#' + ((1 << 24) + (parseInt(match[0]) << 16) + (parseInt(match[1]) << 8) + parseInt(match[2])).toString(16).slice(1);
                 }
                 return defaultHex;
             }
-
             function parseSpacingToObject(value) {
                 if (!value || value === '0px' || value === '0') return { top: 0, right: 0, bottom: 0, left: 0 };
-                let parts = value.toString().trim().split(/\s+/);
-                let nums = parts.map(p => parseFloat(p) || 0);
+                var parts = value.toString().trim().split(/\s+/);
+                var nums = [];
+                for (var i = 0; i < parts.length; i++) {
+                    nums.push(parseFloat(parts[i]) || 0);
+                }
                 if (nums.length === 1) return { top: nums[0], right: nums[0], bottom: nums[0], left: nums[0] };
                 if (nums.length === 2) return { top: nums[0], right: nums[1], bottom: nums[0], left: nums[1] };
                 if (nums.length === 3) return { top: nums[0], right: nums[1], bottom: nums[2], left: nums[1] };
                 return { top: nums[0], right: nums[1], bottom: nums[2], left: nums[3] };
             }
-
             function getCurrentSpacing(element, type) {
-                const style = getComputedStyle(element);
-                let value = type === 'padding' ? (element.style.padding || style.padding) : (element.style.margin || style.margin);
+                var style = getComputedStyle(element);
+                var value = type === 'padding' ? (element.style.padding || style.padding) : (element.style.margin || style.margin);
                 return parseSpacingToObject(value);
             }
-
             function escapeHtml(str) {
                 if (!str) return '';
-                return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m]));
+                return str.replace(/[&<>]/g, function (m) {
+                    if (m === '&') return '&amp;';
+                    if (m === '<') return '&lt;';
+                    return '&gt;';
+                });
             }
-
             function updatePropertiesPanel() {
                 if (!selectedElement || !preview.contains(selectedElement)) {
                     if (selectedElement) selectedElement.classList.remove('editable-element');
                     selectedElement = null;
-                    propContentDiv.innerHTML = `<div class="empty-state">🔍 Ничего не выбрано<br>нажмите на элемент сайта</div>`;
+                    propContentDiv.innerHTML = '<div class="empty-state">🔍 Ничего не выбрано<br>нажмите на элемент сайта</div>';
                     statusMsg.innerText = '💡 Кликните по элементу';
                     return;
                 }
-
                 selectedElement.classList.add('editable-element');
-                const tag = selectedElement.tagName.toLowerCase();
-                const isImage = tag === 'img';
-                let currentText = !isImage ? (selectedElement.innerText || '') : '';
-                let imgSrc = isImage ? selectedElement.src : '';
-
-                const computedStyle = getComputedStyle(selectedElement);
-                const currentColorHex = getRealColorHex(selectedElement.style.color || computedStyle.color, '#e2e8f0');
-                const currentBgHex = getRealColorHex(selectedElement.style.backgroundColor || computedStyle.backgroundColor, '#0c0f17');
-                const currentFs = selectedElement.style.fontSize || computedStyle.fontSize;
-                const paddingObj = getCurrentSpacing(selectedElement, 'padding');
-                const marginObj = getCurrentSpacing(selectedElement, 'margin');
-                const currentRadius = selectedElement.style.borderRadius || computedStyle.borderRadius || '12px';
-                const currentBorder = selectedElement.style.border || computedStyle.border;
-
-                propContentDiv.innerHTML = `
-                        ${!isImage ? `<div class="prop-group"><label>📝 Текст / содержимое</label><input type="text" id="propText" value="${escapeHtml(currentText)}"></div>` : ''}
-                        ${isImage ? `<div class="prop-group"><label>🖼 URL изображения</label><input type="text" id="propImgSrc" value="${escapeHtml(imgSrc)}"></div>` : ''}
-                        <div class="prop-group"><label>🎨 Цвет текста</label><input type="color" id="propColor" value="${currentColorHex}"></div>
-                        <div class="prop-group"><label>🖌 Фон элемента</label><input type="color" id="propBgColor" value="${currentBgHex}"></div>
-                        <div class="prop-group"><label>📏 Размер шрифта (px)</label><input type="number" id="propFontSize" value="${parseFloat(currentFs) || 16}" step="1"></div>
-                        <div class="prop-group"><label>🔲 Внутренние отступы (padding)</label>
-                            <div class="spacing-grid">
-                                <div class="spacing-item"><label>Верх</label><input type="number" id="paddingTop" value="${paddingObj.top}"></div>
-                                <div class="spacing-item"><label>Право</label><input type="number" id="paddingRight" value="${paddingObj.right}"></div>
-                                <div class="spacing-item"><label>Низ</label><input type="number" id="paddingBottom" value="${paddingObj.bottom}"></div>
-                                <div class="spacing-item"><label>Лево</label><input type="number" id="paddingLeft" value="${paddingObj.left}"></div>
-                            </div>
-                        </div>
-                        <div class="prop-group"><label>🔄 Внешние отступы (margin)</label>
-                            <div class="spacing-grid">
-                                <div class="spacing-item"><label>Верх</label><input type="number" id="marginTop" value="${marginObj.top}"></div>
-                                <div class="spacing-item"><label>Право</label><input type="number" id="marginRight" value="${marginObj.right}"></div>
-                                <div class="spacing-item"><label>Низ</label><input type="number" id="marginBottom" value="${marginObj.bottom}"></div>
-                                <div class="spacing-item"><label>Лево</label><input type="number" id="marginLeft" value="${marginObj.left}"></div>
-                            </div>
-                        </div>
-                        <div class="prop-group"><label>⚡ Скругление</label><input type="text" id="propRadius" value="${currentRadius}"></div>
-                        <div class="prop-group"><label>🖌 Граница</label><input type="text" id="propBorder" value="${currentBorder !== 'none' ? currentBorder : '1px solid #2d3748'}"></div>
-                        <div class="prop-group"><label>✨ Доп. CSS</label><input type="text" id="propExtra" placeholder="box-shadow: 0 8px 20px rgba(0,0,0,0.3);"></div>
-                    `;
-
-                const updatePadding = () => {
+                var tag = selectedElement.tagName.toLowerCase();
+                var isImage = tag === 'img';
+                var currentText = !isImage ? (selectedElement.innerText || '') : '';
+                var imgSrc = isImage ? selectedElement.src : '';
+                var computedStyle = getComputedStyle(selectedElement);
+                var currentColorHex = getRealColorHex(selectedElement.style.color || computedStyle.color, '#e2e8f0');
+                var currentBgHex = getRealColorHex(selectedElement.style.backgroundColor || computedStyle.backgroundColor, '#0c0f17');
+                var currentFs = selectedElement.style.fontSize || computedStyle.fontSize;
+                var paddingObj = getCurrentSpacing(selectedElement, 'padding');
+                var marginObj = getCurrentSpacing(selectedElement, 'margin');
+                var currentRadius = selectedElement.style.borderRadius || computedStyle.borderRadius || '12px';
+                var currentBorder = selectedElement.style.border || computedStyle.border;
+                var html = '';
+                if (!isImage) html += '<div class="prop-group"><label>📝 Текст / содержимое</label><input type="text" id="propText" value="' + escapeHtml(currentText) + '"></div>';
+                if (isImage) html += '<div class="prop-group"><label>🖼 URL изображения</label><input type="text" id="propImgSrc" value="' + escapeHtml(imgSrc) + '"></div>';
+                html += '<div class="prop-group"><label>🎨 Цвет текста</label><input type="color" id="propColor" value="' + currentColorHex + '"></div>';
+                html += '<div class="prop-group"><label>🖌 Фон элемента</label><input type="color" id="propBgColor" value="' + currentBgHex + '"></div>';
+                html += '<div class="prop-group"><label>📏 Размер шрифта (px)</label><input type="number" id="propFontSize" value="' + (parseFloat(currentFs) || 16) + '" step="1"></div>';
+                html += '<div class="prop-group"><label>🔲 Внутренние отступы (padding)</label><div class="spacing-grid"><div class="spacing-item"><label>Верх</label><input type="number" id="paddingTop" value="' + paddingObj.top + '"></div><div class="spacing-item"><label>Право</label><input type="number" id="paddingRight" value="' + paddingObj.right + '"></div><div class="spacing-item"><label>Низ</label><input type="number" id="paddingBottom" value="' + paddingObj.bottom + '"></div><div class="spacing-item"><label>Лево</label><input type="number" id="paddingLeft" value="' + paddingObj.left + '"></div></div></div>';
+                html += '<div class="prop-group"><label>🔄 Внешние отступы (margin)</label><div class="spacing-grid"><div class="spacing-item"><label>Верх</label><input type="number" id="marginTop" value="' + marginObj.top + '"></div><div class="spacing-item"><label>Право</label><input type="number" id="marginRight" value="' + marginObj.right + '"></div><div class="spacing-item"><label>Низ</label><input type="number" id="marginBottom" value="' + marginObj.bottom + '"></div><div class="spacing-item"><label>Лево</label><input type="number" id="marginLeft" value="' + marginObj.left + '"></div></div></div>';
+                html += '<div class="prop-group"><label>⚡ Скругление</label><input type="text" id="propRadius" value="' + currentRadius + '"></div>';
+                html += '<div class="prop-group"><label>🖌 Граница</label><input type="text" id="propBorder" value="' + (currentBorder !== 'none' ? currentBorder : '1px solid #2d3748') + '"></div>';
+                html += '<div class="prop-group"><label>✨ Доп. CSS</label><input type="text" id="propExtra" placeholder="box-shadow: 0 8px 20px rgba(0,0,0,0.3);"></div>';
+                propContentDiv.innerHTML = html;
+                function updatePadding() {
                     if (!selectedElement) return;
-                    selectedElement.style.padding = `${document.getElementById('paddingTop')?.value || 0}px ${document.getElementById('paddingRight')?.value || 0}px ${document.getElementById('paddingBottom')?.value || 0}px ${document.getElementById('paddingLeft')?.value || 0}px`;
+                    var top = document.getElementById('paddingTop')?.value || 0;
+                    var right = document.getElementById('paddingRight')?.value || 0;
+                    var bottom = document.getElementById('paddingBottom')?.value || 0;
+                    var left = document.getElementById('paddingLeft')?.value || 0;
+                    selectedElement.style.padding = top + 'px ' + right + 'px ' + bottom + 'px ' + left + 'px';
                     handleContentChange();
-                };
-
-                const updateMargin = () => {
+                }
+                function updateMargin() {
                     if (!selectedElement) return;
-                    selectedElement.style.margin = `${document.getElementById('marginTop')?.value || 0}px ${document.getElementById('marginRight')?.value || 0}px ${document.getElementById('marginBottom')?.value || 0}px ${document.getElementById('marginLeft')?.value || 0}px`;
+                    var top = document.getElementById('marginTop')?.value || 0;
+                    var right = document.getElementById('marginRight')?.value || 0;
+                    var bottom = document.getElementById('marginBottom')?.value || 0;
+                    var left = document.getElementById('marginLeft')?.value || 0;
+                    selectedElement.style.margin = top + 'px ' + right + 'px ' + bottom + 'px ' + left + 'px';
                     handleContentChange();
-                };
-
-                if (!isImage) document.getElementById('propText')?.addEventListener('input', e => { if (selectedElement) { selectedElement.innerText = e.target.value; handleContentChange(); } });
-                if (isImage) document.getElementById('propImgSrc')?.addEventListener('input', e => { if (selectedElement) { selectedElement.src = e.target.value; handleContentChange(); } });
-                document.getElementById('propColor')?.addEventListener('input', e => { if (selectedElement) { selectedElement.style.color = e.target.value; handleContentChange(); } });
-                document.getElementById('propBgColor')?.addEventListener('input', e => { if (selectedElement) { selectedElement.style.backgroundColor = e.target.value; handleContentChange(); } });
-                document.getElementById('propFontSize')?.addEventListener('input', e => { if (selectedElement) { selectedElement.style.fontSize = e.target.value + 'px'; handleContentChange(); } });
-                ['paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft'].forEach(id => document.getElementById(id)?.addEventListener('input', updatePadding));
-                ['marginTop', 'marginRight', 'marginBottom', 'marginLeft'].forEach(id => document.getElementById(id)?.addEventListener('input', updateMargin));
-                document.getElementById('propRadius')?.addEventListener('input', e => { if (selectedElement) { selectedElement.style.borderRadius = e.target.value; handleContentChange(); } });
-                document.getElementById('propBorder')?.addEventListener('input', e => { if (selectedElement) { selectedElement.style.border = e.target.value; handleContentChange(); } });
-                document.getElementById('propExtra')?.addEventListener('input', e => { if (selectedElement) { selectedElement.style.cssText += '; ' + e.target.value; handleContentChange(); } });
-
-                statusMsg.innerText = `✏️ Редактируем: ${tag}`;
+                }
+                if (!isImage) document.getElementById('propText')?.addEventListener('input', function (e) { if (selectedElement) { selectedElement.innerText = e.target.value; handleContentChange(); } });
+                if (isImage) document.getElementById('propImgSrc')?.addEventListener('input', function (e) { if (selectedElement) { selectedElement.src = e.target.value; handleContentChange(); } });
+                document.getElementById('propColor')?.addEventListener('input', function (e) { if (selectedElement) { selectedElement.style.color = e.target.value; handleContentChange(); } });
+                document.getElementById('propBgColor')?.addEventListener('input', function (e) { if (selectedElement) { selectedElement.style.backgroundColor = e.target.value; handleContentChange(); } });
+                document.getElementById('propFontSize')?.addEventListener('input', function (e) { if (selectedElement) { selectedElement.style.fontSize = e.target.value + 'px'; handleContentChange(); } });
+                var paddingIds = ['paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft'];
+                for (var i = 0; i < paddingIds.length; i++) {
+                    var el = document.getElementById(paddingIds[i]);
+                    if (el) el.addEventListener('input', updatePadding);
+                }
+                var marginIds = ['marginTop', 'marginRight', 'marginBottom', 'marginLeft'];
+                for (var i = 0; i < marginIds.length; i++) {
+                    var el = document.getElementById(marginIds[i]);
+                    if (el) el.addEventListener('input', updateMargin);
+                }
+                document.getElementById('propRadius')?.addEventListener('input', function (e) { if (selectedElement) { selectedElement.style.borderRadius = e.target.value; handleContentChange(); } });
+                document.getElementById('propBorder')?.addEventListener('input', function (e) { if (selectedElement) { selectedElement.style.border = e.target.value; handleContentChange(); } });
+                document.getElementById('propExtra')?.addEventListener('input', function (e) { if (selectedElement) { selectedElement.style.cssText += '; ' + e.target.value; handleContentChange(); } });
+                statusMsg.innerText = '✏️ Редактируем: ' + tag;
             }
-
             function clearSelected() {
                 if (selectedElement) selectedElement.classList.remove('editable-element');
                 selectedElement = null;
                 updatePropertiesPanel();
             }
-
             function createElementByType(type) {
-                let el;
+                var el;
                 switch (type) {
                     case 'container':
                         el = document.createElement('div');
                         el.className = 'container-block';
-                        el.innerHTML = `<div class="container-label">Контейнер (перетащите сюда элементы)</div>`;
+                        el.innerHTML = '<div class="container-label">Контейнер (перетащите сюда элементы)</div>';
                         break;
                     case 'flexRow':
                         el = document.createElement('div');
                         el.className = 'flex-row';
-                        el.innerHTML = `<div class="container-label">📏 Flex ряд (горизонтальный)</div>`;
+                        el.innerHTML = '<div class="container-label">📏 Flex ряд (горизонтальный)</div>';
                         break;
                     case 'flexCol':
                         el = document.createElement('div');
                         el.className = 'flex-col';
-                        el.innerHTML = `<div class="container-label">📐 Flex колонка (вертикальный)</div>`;
+                        el.innerHTML = '<div class="container-label">📐 Flex колонка (вертикальный)</div>';
                         break;
                     case 'h1': el = document.createElement('h1'); el.innerText = 'Заголовок H1'; break;
                     case 'h2': el = document.createElement('h2'); el.innerText = 'Заголовок H2'; break;
@@ -1254,41 +610,48 @@
                     case 'counter':
                         el = document.createElement('div');
                         el.innerHTML = '<button style="background:#2d3748; border:none; padding:4px 12px; color:white;">-</button> <span style="margin:0 12px; color:white;">0</span> <button style="background:#2d3748; border:none; padding:4px 12px; color:white;">+</button>';
-                        const span = el.querySelector('span');
-                        el.querySelectorAll('button').forEach((btn, idx) => btn.onclick = (e) => { e.stopPropagation(); let val = parseInt(span.innerText); span.innerText = idx === 0 ? val - 1 : val + 1; });
+                        var span = el.querySelector('span');
+                        var btns = el.querySelectorAll('button');
+                        for (var i = 0; i < btns.length; i++) {
+                            btns[i].onclick = (function (idx) {
+                                return function (e) {
+                                    e.stopPropagation();
+                                    var val = parseInt(span.innerText);
+                                    span.innerText = idx === 0 ? val - 1 : val + 1;
+                                };
+                            })(i);
+                        }
                         break;
                     case 'accordion':
                         el = document.createElement('div');
                         el.innerHTML = '<div style="background:#181e2c; padding:12px; cursor:pointer;">📁 Аккордеон</div><div style="padding:12px;">Скрытый контент</div>';
-                        const header = el.firstChild;
-                        const content = el.lastChild;
-                        header.onclick = (e) => { e.stopPropagation(); content.style.display = content.style.display === 'none' ? 'block' : 'none'; };
+                        var header = el.firstChild;
+                        var content = el.lastChild;
+                        header.onclick = function (e) { e.stopPropagation(); content.style.display = content.style.display === 'none' ? 'block' : 'none'; };
                         content.style.display = 'block';
                         break;
                     case 'stats': el = document.createElement('div'); el.innerHTML = '<div style="display:flex;"><div style="flex:1"><h3>150+</h3><p>проектов</p></div><div style="flex:1"><h3>24/7</h3><p>поддержка</p></div></div>'; break;
                     default: return null;
                 }
-                if (el && !el.classList?.contains('container-label')) {
+                if (el && (!el.classList || !el.classList.contains('container-label'))) {
                     el.classList.add('draggable-element');
                 }
                 return el;
             }
-
             function addElementToSite(type) {
-                const newEl = createElementByType(type);
+                var newEl = createElementByType(type);
                 if (!newEl) return;
                 preview.appendChild(newEl);
                 if (selectedElement) selectedElement.classList.remove('editable-element');
                 selectedElement = newEl;
                 updatePropertiesPanel();
                 newEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                statusMsg.innerText = `➕ Добавлен: ${type}`;
+                statusMsg.innerText = '➕ Добавлен: ' + type;
                 switchTab('editor');
                 attachGlobalEventListeners();
                 initDragAndDrop();
                 handleContentChange();
             }
-
             function deleteSelectedElem() {
                 if (selectedElement && preview.contains(selectedElement)) {
                     selectedElement.remove();
@@ -1301,7 +664,6 @@
                     showToast('⚠️ Ничего не выбрано', true);
                 }
             }
-
             function clearCanvas() {
                 if (confirm('Очистить всё?')) {
                     preview.innerHTML = getDefaultHtml();
@@ -1312,60 +674,34 @@
                     showToast('Холст очищен', false);
                 }
             }
-
             function getExportStyles() {
-                return `
-                        *{margin:0;padding:0;box-sizing:border-box;}
-                        body{font-family:system-ui;}
-                        .container{max-width:1200px;margin:0 auto;background:#0c0f17;border-radius:32px;padding:24px;color:#e2e8f0;}
-                        .default-container{padding:28px;text-align:center;background:linear-gradient(135deg,#10141f,#070a10);border-radius:32px;margin:20px;}
-                        .default-container h2{color:#e0e7ff;margin:16px 0;}
-                        .default-button{background:#8b5cf6;border:none;padding:10px 28px;border-radius:60px;color:white;cursor:pointer;}
-                        .features-row{display:flex;gap:16px;padding:10px;}
-                        .feature-card{flex:1;background:#10151f;border-radius:24px;padding:18px;}
-                    `;
+                return '*{margin:0;padding:0;box-sizing:border-box;}body{font-family:system-ui;}.container{max-width:1200px;margin:0 auto;background:#0c0f17;border-radius:32px;padding:24px;color:#e2e8f0;}.default-container{padding:28px;text-align:center;background:linear-gradient(135deg,#10141f,#070a10);border-radius:32px;margin:20px;}.default-container h2{color:#e0e7ff;margin:16px 0;}.default-button{background:#8b5cf6;border:none;padding:10px 28px;border-radius:60px;color:white;cursor:pointer;}.features-row{display:flex;gap:16px;padding:10px;}.feature-card{flex:1;background:#10151f;border-radius:24px;padding:18px;}';
             }
-
             function exportFullHTML() {
-                const clone = preview.cloneNode(true);
-                clone.querySelectorAll('.editable-element, .draggable-element').forEach(el => {
-                    el.classList.remove('editable-element', 'draggable-element');
-                });
-                const inner = clone.innerHTML;
-                const bgColor = bgPicker.value;
-
-                const openHtml = '<' + 'html>';
-                const closeHtml = '<' + '/' + 'html>';
-                const openHead = '<' + 'head>';
-                const closeHead = '<' + '/' + 'head>';
-                const openBody = '<' + 'body';
-                const closeBody = '<' + '/' + 'body>';
-                const metaCharset = '<' + 'meta charset="UTF-8">';
-                const metaViewport = '<' + 'meta name="viewport" content="width=device-width, initial-scale=1.0">';
-                const titleOpen = '<' + 'title>';
-                const titleClose = '<' + '/' + 'title>';
-                const styleOpen = '<' + 'style>';
-                const styleClose = '<' + '/' + 'style>';
-
-                const styles = getExportStyles();
-
-                const doc =
-                    '<!DOCTYPE html>' +
-                    openHtml +
-                    openHead +
-                    metaCharset +
-                    metaViewport +
-                    titleOpen + 'DarkForge Site' + titleClose +
-                    styleOpen + styles + styleClose +
-                    closeHead +
-                    openBody + ' style="background:' + bgColor + '; padding:2rem; font-family: system-ui;"' + '>' +
-                    '<div class="container">' + inner + '</div>' +
-                    closeBody +
-                    closeHtml;
-
-                const blob = new Blob([doc], { type: 'text/html' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
+                var clone = preview.cloneNode(true);
+                var editableElements = clone.querySelectorAll('.editable-element, .draggable-element');
+                for (var i = 0; i < editableElements.length; i++) {
+                    editableElements[i].classList.remove('editable-element', 'draggable-element');
+                }
+                var inner = clone.innerHTML;
+                var bgColor = bgPicker.value;
+                var openHtml = '<' + 'html>';
+                var closeHtml = '<' + '/' + 'html>';
+                var openHead = '<' + 'head>';
+                var closeHead = '<' + '/' + 'head>';
+                var openBody = '<' + 'body';
+                var closeBody = '<' + '/' + 'body>';
+                var metaCharset = '<' + 'meta charset="UTF-8">';
+                var metaViewport = '<' + 'meta name="viewport" content="width=device-width, initial-scale=1.0">';
+                var titleOpen = '<' + 'title>';
+                var titleClose = '<' + '/' + 'title>';
+                var styleOpen = '<' + 'style>';
+                var styleClose = '<' + '/' + 'style>';
+                var styles = getExportStyles();
+                var doc = '<!DOCTYPE html>' + openHtml + openHead + metaCharset + metaViewport + titleOpen + 'DarkForge Site' + titleClose + styleOpen + styles + styleClose + closeHead + openBody + ' style="background:' + bgColor + '; padding:2rem; font-family: system-ui;"' + '>' + '<div class="container">' + inner + '</div>' + closeBody + closeHtml;
+                var blob = new Blob([doc], { type: 'text/html' });
+                var url = URL.createObjectURL(blob);
+                var a = document.createElement('a');
                 a.href = url;
                 a.download = 'darkforge_export.html';
                 document.body.appendChild(a);
@@ -1374,18 +710,17 @@
                 URL.revokeObjectURL(url);
                 showToast('✅ HTML экспортирован', false);
             }
-
             function importHTML() {
-                const input = document.createElement('input');
+                var input = document.createElement('input');
                 input.type = 'file';
                 input.accept = '.html,.htm';
-                input.onchange = (e) => {
-                    const file = e.target.files[0];
+                input.onchange = function (e) {
+                    var file = e.target.files[0];
                     if (!file) return;
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                        let importedHtml = event.target.result;
-                        const bodyMatch = importedHtml.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+                    var reader = new FileReader();
+                    reader.onload = function (event) {
+                        var importedHtml = event.target.result;
+                        var bodyMatch = importedHtml.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
                         if (bodyMatch && bodyMatch[1]) importedHtml = bodyMatch[1];
                         preview.innerHTML = importedHtml;
                         clearSelected();
@@ -1394,30 +729,28 @@
                         handleContentChange();
                         showToast('✅ HTML импортирован', false);
                     };
-                    reader.onerror = () => showToast('❌ Ошибка чтения файла', true);
+                    reader.onerror = function () { showToast('❌ Ошибка чтения файла', true); };
                     reader.readAsText(file);
                 };
                 input.click();
             }
-
-            const observer = new MutationObserver(() => handleContentChange());
+            var observer = new MutationObserver(function () { handleContentChange(); });
             observer.observe(preview, { childList: true, subtree: true, attributes: true });
-
-            document.querySelectorAll('.element-card').forEach(card => card.addEventListener('click', (e) => {
-                e.stopPropagation();
-                addElementToSite(card.getAttribute('data-type'));
-            }));
-
+            var cards = document.querySelectorAll('.element-card');
+            for (var i = 0; i < cards.length; i++) {
+                cards[i].addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    addElementToSite(this.getAttribute('data-type'));
+                });
+            }
             document.getElementById('exportHtmlBtn').addEventListener('click', exportFullHTML);
             document.getElementById('importHtmlBtn').addEventListener('click', importHTML);
             document.getElementById('clearCanvasBtn').addEventListener('click', clearCanvas);
             deleteBtn.addEventListener('click', deleteSelectedElem);
-            bgPicker.addEventListener('input', (e) => preview.style.backgroundColor = e.target.value);
+            bgPicker.addEventListener('input', function (e) { preview.style.backgroundColor = e.target.value; });
             logoutBtn.addEventListener('click', logout);
             backToProjectsBtn.addEventListener('click', goBackToProjects);
-
             loadUserInfo();
-
             if (projectId && projectId !== 'null' && projectId !== 'undefined') {
                 loadProjectFromDatabase(projectId, projectName);
                 sessionStorage.removeItem('currentProjectId');
@@ -1427,7 +760,6 @@
                 projectNameSpan.textContent = 'Новый проект';
                 updateSaveStatus('saved', '● Новый проект');
             }
-
             preview.style.backgroundColor = bgPicker.value;
             attachGlobalEventListeners();
             initDragAndDrop();
