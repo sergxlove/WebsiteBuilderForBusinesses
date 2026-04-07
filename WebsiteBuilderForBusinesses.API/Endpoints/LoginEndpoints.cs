@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Serilog;
 using System.Security.Claims;
 using WebsiteBuilderForBusinesses.API.Requests;
 using WebsiteBuilderForBusinesses.Applications.Abstractions;
@@ -43,8 +44,9 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                     context.Response.Cookies.Append("jwt", jwttoken!);
                     return Results.Ok();
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Log.Error(ex.Message);
                     return Results.InternalServerError();
                 }
             }).RequireRateLimiting("LoginPolicy");
@@ -89,8 +91,9 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                     context.Response.Cookies.Append("jwt", jwttoken!);
                     return Results.Ok();
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Log.Error(ex.Message);
                     return Results.InternalServerError();
                 }
             }).RequireAuthorization("OnlyForAdmin")
@@ -98,8 +101,16 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
 
             app.MapGet("/logout", (HttpContext context) =>
             {
-                context.Response.Cookies.Delete("jwt");
-                return Results.Ok();
+                try
+                {
+                    context.Response.Cookies.Delete("jwt");
+                    return Results.Ok();
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex.Message);
+                    return Results.InternalServerError();
+                }
             }).RequireAuthorization("OnlyForAuthUser")
             .RequireRateLimiting("GeneralPolicy");
 

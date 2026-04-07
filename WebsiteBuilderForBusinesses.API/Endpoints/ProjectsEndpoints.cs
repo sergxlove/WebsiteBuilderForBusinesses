@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Serilog;
 using WebsiteBuilderForBusinesses.API.Requests;
 using WebsiteBuilderForBusinesses.Applications.Abstractions;
 using WebsiteBuilderForBusinesses.Core.Infrastructures;
@@ -18,8 +19,9 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                 {
                     return Results.Ok(await projectService.GetAllAsync(token));
                 }
-                catch
+                catch (Exception ex) 
                 {
+                    Log.Error(ex.Message);
                     return Results.InternalServerError();
                 }
             }).RequireAuthorization("OnlyForAuthUser")
@@ -34,8 +36,9 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                 {
                     return Results.Ok(await projectService.GetHtmlByIdAsync(request.Id, token));
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Log.Error(ex.Message);
                     return Results.InternalServerError();
                 }
             }).RequireAuthorization("OnlyForAuthUser")
@@ -53,8 +56,9 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                     if (result == 0) return Results.BadRequest("Проект не был удален из-за ошибки");
                     return Results.Ok();
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Log.Error(ex.Message);
                     return Results.InternalServerError();
                 }
             }).RequireAuthorization("OnlyForAuthUser")
@@ -75,8 +79,9 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                     if (resultUpdate == 0) return Results.BadRequest("Не удалось обновить проект");
                     return Results.Ok();
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Log.Error(ex.Message);
                     return Results.InternalServerError();
                 }
             }).RequireAuthorization("OnlyForAuthUser")
@@ -98,8 +103,9 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                     if (resultUpdate == 0) return Results.BadRequest("Не удалось обновить проект");
                     return Results.Ok();
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Log.Error(ex.Message);
                     return Results.InternalServerError();
                 }
             }).RequireAuthorization("OnlyForAuthUser")
@@ -122,11 +128,11 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                     if (updateResult != project.Value.Id) return Results.BadRequest("Произошла ошибка");
                     return Results.Ok();
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Log.Error(ex.Message);
                     return Results.InternalServerError();
                 }
-                
             }).RequireAuthorization("OnlyForAuthUser")
             .RequireRateLimiting("GeneralPolicy");
 

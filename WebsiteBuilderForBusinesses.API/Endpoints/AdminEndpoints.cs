@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Serilog;
 using System.Diagnostics;
 using System.Text;
 using WebsiteBuilderForBusinesses.API.Requests;
@@ -21,8 +22,9 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                 {
                     return Results.Ok(await userService.GetAllAsync(token));
                 }
-                catch
+                catch(Exception ex)
                 {
+                    Log.Error(ex.Message);
                     return Results.InternalServerError();
                 }
             }).RequireAuthorization("OnlyForAdmin")
@@ -44,8 +46,9 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                     if (resultUpdate == 0) return Results.BadRequest("Не удалось обновить данные пользователя");
                     return Results.Ok();
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Log.Error(ex.Message);
                     return Results.InternalServerError();
                 }
             }).RequireAuthorization("OnlyForAdmin")
@@ -67,8 +70,9 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                     if (resultUpdate == 0) return Results.BadRequest("Не удалось обновить данные пользователя");
                     return Results.Ok();
                 }
-                catch
+                catch(Exception ex)
                 {
+                    Log.Error(ex.Message);
                     return Results.InternalServerError();
                 }
             }).RequireAuthorization("OnlyForAdmin")
@@ -86,8 +90,9 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                     if (resultDelete == 0) return Results.BadRequest("Произошла ошибка при удалении");
                     return Results.Ok();
                 }
-                catch
+                catch(Exception ex)
                 {
+                    Log.Error(ex.Message);
                     return Results.InternalServerError();
                 }
             }).RequireAuthorization("OnlyForAdmin")
@@ -125,7 +130,8 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                 }
                 catch (Exception ex)
                 {
-                    return Results.BadRequest($"Ошибка: {ex.Message}");
+                    Log.Error(ex.Message);
+                    return Results.InternalServerError();
                 }
             }).RequireAuthorization("OnlyForAdmin")
             .RequireRateLimiting("GeneralPolicy");
