@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using System.Text;
 using System.Threading.RateLimiting;
 using WebsiteBuilderForBusinesses.API.Extensions;
@@ -21,10 +21,22 @@ namespace WebsiteBuilderForBusinesses.API
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            IConfigurationSection? seqSetting = builder.Configuration.GetSection("SeqSetting");
+            Log.Logger = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .Enrich.WithMachineName()
+                .Enrich.WithThreadId()
+                .WriteTo.Seq(
+                    serverUrl: seqSetting["ServerUrl"]!,
+                    apiKey: seqSetting["ApiKey"]) 
+                .WriteTo.Console()
+                .CreateLogger();
+            builder.Host.UseSerilog();
+
             builder.Services.AddDbContext<WebBuilderDbContext>(options =>
                 options.UseNpgsql("Host=localhost;Port=5432;Database=db;Username=postgres;Password=123"));
             builder.Services.AddScoped<IPasswordHasherService, PasswordHasherService>();
-            builder.Services.AddScoped<IJwtProviderService,  JwtProviderService>();
+            builder.Services.AddScoped<IJwtProviderService, JwtProviderService>();
             builder.Services.AddScoped<IUsersRepository, UsersRepository>();
             builder.Services.AddScoped<IUsersService, UsersService>();
             builder.Services.AddScoped<IProjectsRepository, ProjectsRepository>();
