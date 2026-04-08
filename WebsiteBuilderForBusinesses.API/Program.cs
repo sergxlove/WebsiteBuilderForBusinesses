@@ -23,6 +23,7 @@ namespace WebsiteBuilderForBusinesses.API
             var builder = WebApplication.CreateBuilder(args);
             IConfigurationSection? seqSetting = builder.Configuration.GetSection("SeqSetting");
             Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Information()
                 .Enrich.FromLogContext()
                 .Enrich.WithMachineName()
                 .Enrich.WithThreadId()
@@ -32,9 +33,9 @@ namespace WebsiteBuilderForBusinesses.API
                 .WriteTo.Console()
                 .CreateLogger();
             builder.Host.UseSerilog();
-
+            IConfigurationSection? postgresSetting = builder.Configuration.GetSection("PostgresSetting");
             builder.Services.AddDbContext<WebBuilderDbContext>(options =>
-                options.UseNpgsql("Host=localhost;Port=5432;Database=db;Username=postgres;Password=123"));
+                options.UseNpgsql(postgresSetting["ConnectionString"]));
             builder.Services.AddScoped<IPasswordHasherService, PasswordHasherService>();
             builder.Services.AddScoped<IJwtProviderService, JwtProviderService>();
             builder.Services.AddScoped<IUsersRepository, UsersRepository>();

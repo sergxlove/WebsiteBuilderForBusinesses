@@ -13,7 +13,14 @@ WebsiteBuilderForBusinesses is an ASP.NET Core web application that provides an 
 
 ## Architecture 
 
-
+![image](https://github.com/sergxlove/WebsiteBuilderForBusinesses/blob/master/resources/ArchitectureWebBuilder.png)
 
 ## Preview 
+
+![image](https://github.com/sergxlove/WebsiteBuilderForBusinesses/blob/master/resources/mainPage.png)
+![image](https://github.com/sergxlove/WebsiteBuilderForBusinesses/blob/master/resources/projectsPage.png)
+
+## Install 
+
+## Info 
 

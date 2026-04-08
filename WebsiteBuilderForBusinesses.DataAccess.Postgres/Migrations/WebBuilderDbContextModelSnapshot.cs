@@ -65,6 +65,22 @@ namespace WebsiteBuilderForBusinesses.DataAccess.Postgres.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("users", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("438e452d-a8db-4c7a-b4b8-4ada7cda7d76"),
+                            HashPassword = "$2a$11$cXzJITgtUiw/4cWi1y.XH.xHG01Bwyj53m3w2HOU4nWIrOk24AgXG",
+                            Login = "admin@mail.ru",
+                            Role = "admin"
+                        },
+                        new
+                        {
+                            Id = new Guid("c93c0103-14f1-43b0-9a0c-5862624bbd9b"),
+                            HashPassword = "$2a$11$zD.sI1v4tUcoNEHXYH/vduhMU8kiFMXJh5yURxIkE5S2emBiS156i",
+                            Login = "user@mail.ru",
+                            Role = "user"
+                        });
                 });
 #pragma warning restore 612, 618
         }
