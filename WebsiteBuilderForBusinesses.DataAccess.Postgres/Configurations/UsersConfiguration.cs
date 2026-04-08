@@ -19,14 +19,14 @@ namespace WebsiteBuilderForBusinesses.DataAccess.Postgres.Configurations
             builder.HasData(
                 new UsersEntity
                 {
-                    Id = Guid.NewGuid(),
+                    Id = Guid.Parse("438e452d-a8db-4c7a-b4b8-4ada7cda7d76"),
                     Login = "admin@mail.ru",
                     HashPassword = "$2a$11$cXzJITgtUiw/4cWi1y.XH.xHG01Bwyj53m3w2HOU4nWIrOk24AgXG", //admin123
                     Role = "admin"
                 },
                 new UsersEntity
                 {
-                    Id = Guid.NewGuid(),
+                    Id = Guid.Parse("c93c0103-14f1-43b0-9a0c-5862624bbd9b"),
                     Login = "user@mail.ru",
                     HashPassword = "$2a$11$zD.sI1v4tUcoNEHXYH/vduhMU8kiFMXJh5yURxIkE5S2emBiS156i", //user123
                     Role = "user"

@@ -6,25 +6,28 @@ services:
     container_name: webbuilder-db
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: "123"
+      POSTGRES_PASSWORD: "Dvta7WAVgwXk1aGi"
       POSTGRES_DB: db
     ports:
       - "5432:5432"
     volumes:
-      - postgres-/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
     restart: unless-stopped
   seq:
     image: datalust/seq:latest
     container_name: seq
     environment:
       - ACCEPT_EULA=Y
-      - SEQ_API_KEY=OOl3Wum0D07sGQqF
+      - SEQ_FIRSTRUN_APIKEY=OOl3Wum0D07sGQqF
+      - SEQ_FIRSTRUN_ADMINUSERNAME=admin
       - SEQ_FIRSTRUN_ADMINPASSWORD=M0xynmCS4rYePGni
+      - SEQ_FIRSTRUN_REQUIREAUTHENTICATION=true
     ports:
       - "5341:80"
+      - "5342:5341" 
     volumes:
-      - seq-/data
+      - seq-data:/data
     restart: unless-stopped
 volumes:
-  postgres-
-  seq-
+  postgres-data:
+  seq-data:
