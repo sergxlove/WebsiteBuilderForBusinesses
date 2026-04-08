@@ -22,5 +22,45 @@ WebsiteBuilderForBusinesses is an ASP.NET Core web application that provides an 
 
 ## Install 
 
+The program requires Docker and .NET 10 runtime to run. 
+
+1. Download the archive from the "Release" tab and extract it
+2. Go to the unpacked folder using powershell, with the command cd ...\WebBuilder
+3. Run the command in the directory: docker compose up -d
+4. Run the command in the directory: Get-Content "backupWebbuilder.sql" | docker exec -i webbuilder-db psql -U postgres -d db
+5. Open the WebsiteBuilderForBusinesses.API.exe file
+6. Go to http://localhost:5001
+
+To stop the program, close the .exe executable file and run the command: docker compose down
+
 ## Info 
+
+### Pages 
+
+- /page/login - login page, available for unauthenticated users
+
+- /index - the main page of the website builder with all the functionality is available to authorized users with any role
+
+- /page/reg - user registration page, available for authorized users with the administrator role
+
+- /page/projects - a project list page available to authorized users with any role
+
+- /page/admin - the administrator page with user management capabilities is available to authorized users with the administrator role
+
+- /swagger - a page with information and the ability to test all endpoints, , available for unauthenticated users 
+
+When errors 401, 403, 404 occur, there are graphical pages that display the error number and message
+
+### Login information
+
+By default, the system has 1 administrator user and 1 user user. Login details:
+
+- Login: admin@mail.ru ; Password: admin123 ; Role: admin
+- Login: user@mail.ru ; Password: user123 ; Role: user
+
+### Logs 
+
+Logging is done to the console and to seq. To open the seq page, go to http://localhost:5341 and enter your login details: Login: admin ; Password: M0xynmCS4rYePGni
+
+
 
