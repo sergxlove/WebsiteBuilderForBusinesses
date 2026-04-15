@@ -22,6 +22,7 @@ namespace WebsiteBuilderForBusinesses.API
         {
             var builder = WebApplication.CreateBuilder(args);
             IConfigurationSection? seqSetting = builder.Configuration.GetSection("SeqSetting");
+            IConfigurationSection? aspnetSetting = builder.Configuration.GetSection("AspnetSetting");
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Information()
                 .Enrich.FromLogContext()
@@ -117,7 +118,7 @@ namespace WebsiteBuilderForBusinesses.API
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-
+            builder.WebHost.UseUrls($"http://localhost:{aspnetSetting["Port"]}");
             var app = builder.Build();
             app.UseStaticFiles();
             app.UseStatusCodePagesWithReExecute("/error/{0}");
