@@ -1,6 +1,9 @@
+using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System.Text;
@@ -116,6 +119,12 @@ namespace WebsiteBuilderForBusinesses.API
                 });
             });
 
+            builder.Services.AddHealthChecks()
+                .AddCheck("self", () =>
+                {
+                    return HealthCheckResult.Healthy("ok");
+                });
+
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.WebHost.UseUrls($"http://localhost:{aspnetSetting["Port"]}");
@@ -128,6 +137,10 @@ namespace WebsiteBuilderForBusinesses.API
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseRateLimiter();
+            app.MapHealthChecks("/health", new HealthCheckOptions
+            {
+                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+            });
             app.MapAllEndpoints();
             app.Run();
         }
