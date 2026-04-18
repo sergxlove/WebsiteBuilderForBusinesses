@@ -5,6 +5,7 @@ using WebsiteBuilderForBusinesses.API.Requests;
 using WebsiteBuilderForBusinesses.Applications.Abstractions;
 using WebsiteBuilderForBusinesses.Applications.Requests;
 using WebsiteBuilderForBusinesses.Core.Abstractions;
+using WebsiteBuilderForBusinesses.Core.Infrastructures;
 using WebsiteBuilderForBusinesses.Core.Models;
 
 namespace WebsiteBuilderForBusinesses.API.Endpoints
@@ -17,6 +18,7 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                 [FromBody] LoginRequest request,
                 [FromServices] IUsersService userService,
                 [FromServices] IJwtProviderService jwtService,
+                [FromServices] ITokensUserService tokenService,
                 [FromServices] IConfiguration configuration,
                 CancellationToken token) =>
             {
@@ -27,21 +29,44 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                     if (!await userService.VerifyAsync(request.Login, request.Password))
                         return Results.BadRequest("Неверный логин или пароль");
                     string userRole = await userService.GetRoleAsync(request.Login, token);
+                    Guid userId = await userService.GetIdAsync(request.Login, token);
                     IConfigurationSection? jwtSettings = configuration.GetSection("JwtSettings");
+                    int lifetimeAccess = Convert.ToInt32(configuration["JwtSettings:LifetimeAccessMinutes"]);
+                    int lifetimeRefresh = Convert.ToInt32(configuration["JwtSettings:LifetimeRefreshDays"]);
                     var claims = new List<Claim>()
                     {
+                        new Claim(ClaimTypes.Sid, userId.ToString()),
                         new Claim(ClaimTypes.Role, userRole),
                         new Claim(ClaimTypes.Email, request.Login),
                     };
-                    var jwttoken = jwtService.GenerateToken(new JwtRequest()
+                    string accessToken = jwtService.GenerateToken(new JwtRequest()
                     {
                         Audience = jwtSettings["Audience"]!,
                         Issuer = jwtSettings["Issuer"]!,
                         Claims = claims,
                         SecretKey = jwtSettings["SecretKey"]!,
-                        Expires = DateTime.UtcNow.AddMinutes(Convert.ToDouble(jwtSettings["Lifetime"]!))
+                        Expires = DateTime.UtcNow.AddMinutes(Convert.ToDouble(jwtSettings["LifetimeAccessMinutes"]!))
                     });
-                    context.Response.Cookies.Append("jwt", jwttoken!);
+                    ResultModel<TokensUser> newTokenUser = TokensUser.Create(Guid.NewGuid(), userId,
+                        DateTime.UtcNow, DateTime.UtcNow + TimeSpan.FromDays(lifetimeRefresh),
+                        request.Login, userRole);
+                    if (!string.IsNullOrEmpty(newTokenUser.Error))
+                        return Results.BadRequest(newTokenUser.Error);
+                    int result = await tokenService.UpdateAsync(newTokenUser.Value, token);
+                    if (result == 0) return
+                        Results.Unauthorized();
+                    CookieOptions cookieOptions = new()
+                    {
+                        HttpOnly = true,
+                        Secure = true,
+                        SameSite = SameSiteMode.Strict,
+                        IsEssential = true
+                    };
+                    cookieOptions.MaxAge = TimeSpan.FromMinutes(lifetimeAccess);
+                    context.Response.Cookies.Append("access_token", accessToken, cookieOptions);
+                    cookieOptions.MaxAge = TimeSpan.FromDays(lifetimeRefresh);
+                    context.Response.Cookies.Append("refresh_token", newTokenUser.Value.Id.ToString(),
+                        cookieOptions);
                     return Results.Ok();
                 }
                 catch (Exception ex)
@@ -77,6 +102,7 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                     IConfigurationSection? jwtSettings = configuration.GetSection("JwtSettings");
                     var claims = new List<Claim>()
                     {
+                        new Claim(ClaimTypes.Sid, user.Value.Id.ToString()),
                         new Claim(ClaimTypes.Role, request.Role),
                         new Claim(ClaimTypes.Email, request.Login),
                     };
@@ -86,7 +112,7 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                         Issuer = jwtSettings["Issuer"]!,
                         Claims = claims,
                         SecretKey = jwtSettings["SecretKey"]!,
-                        Expires = DateTime.UtcNow.AddMinutes(Convert.ToDouble(jwtSettings["Lifetime"]!))
+                        Expires = DateTime.UtcNow.AddMinutes(Convert.ToDouble(jwtSettings["LifetimeAccessMinutes"]!))
                     });
                     context.Response.Cookies.Append("jwt", jwttoken!);
                     return Results.Ok();
@@ -99,11 +125,65 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
             }).RequireAuthorization("OnlyForAdmin")
             .RequireRateLimiting("GeneralPolicy");
 
+            app.MapPost("/refresh", async (HttpContext context, 
+                [FromServices] ITokensUserService tokenService, 
+                [FromServices] IJwtProviderService jwtService, 
+                [FromServices] IConfiguration configuration, 
+                CancellationToken token) => 
+            {
+                string? refreshToken = context.Request.Cookies["refresh_token"];
+                if (string.IsNullOrEmpty(refreshToken))
+                    return Results.Unauthorized();
+                Guid refreshTokenGuid = Guid.Parse(refreshToken!);
+                TokensUser? tokenDb = await tokenService.GetAsync(refreshTokenGuid, token);
+                if (tokenDb is null) 
+                    return Results.Unauthorized();
+                var claims = new List<Claim>()
+                    {
+                        new Claim(ClaimTypes.Sid, tokenDb.UserId.ToString()),
+                        new Claim(ClaimTypes.Role, tokenDb.Role),
+                        new Claim(ClaimTypes.Email, tokenDb.Email),
+                    };
+                int lifetimeAccess = Convert.ToInt32(configuration["JwtSettings:LifetimeAccessMinutes"]);
+                int lifetimeRefresh = Convert.ToInt32(configuration["JwtSettings:LifetimeRefreshDays"]);
+                IConfigurationSection? jwtSettings = configuration.GetSection("JwtSettings");
+                string accessToken = jwtService.GenerateToken(new JwtRequest()
+                {
+                    Audience = jwtSettings["Audience"]!,
+                    Issuer = jwtSettings["Issuer"]!,
+                    Claims = claims,
+                    SecretKey = jwtSettings["SecretKey"]!,
+                    Expires = DateTime.UtcNow.AddMinutes(Convert.ToDouble(jwtSettings["LifetimeAccessMinutes"]!))
+                });
+                ResultModel<TokensUser> newTokenUser = TokensUser.Create(Guid.NewGuid(), tokenDb.UserId,
+                    DateTime.UtcNow, DateTime.UtcNow + TimeSpan.FromDays(lifetimeRefresh),
+                    tokenDb.Email, tokenDb.Role);
+                if (!string.IsNullOrEmpty(newTokenUser.Error))
+                    return Results.BadRequest(newTokenUser.Error);
+                int result = await tokenService.UpdateAsync(newTokenUser.Value, token);
+                if (result == 0) return 
+                    Results.Unauthorized();
+                CookieOptions cookieOptions = new()
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict,
+                    IsEssential = true
+                };
+                cookieOptions.MaxAge = TimeSpan.FromMinutes(lifetimeAccess);
+                context.Response.Cookies.Append("access_token", accessToken, cookieOptions);
+                cookieOptions.MaxAge = TimeSpan.FromDays(lifetimeRefresh);
+                context.Response.Cookies.Append("refresh_token", tokenDb.Id.ToString(),
+                    cookieOptions);
+                return Results.Ok();
+            }).RequireRateLimiting("GeneralPolicy");
+
             app.MapGet("/logout", (HttpContext context) =>
             {
                 try
                 {
-                    context.Response.Cookies.Delete("jwt");
+                    context.Response.Cookies.Delete("access_token");
+                    context.Response.Cookies.Delete("refresh_token");
                     return Results.Ok();
                 }
                 catch (Exception ex)

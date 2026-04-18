@@ -44,5 +44,9 @@ namespace WebsiteBuilderForBusinesses.Applications.Services
         {
             return await _repository.DeleteAsync(id, token);
         }
+        public async Task<Guid> GetIdAsync(string login, CancellationToken token)
+        {
+            return await _repository.GetIdAsync(login, token);
+        }
     }
 }
