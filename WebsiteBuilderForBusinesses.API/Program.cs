@@ -46,6 +46,8 @@ namespace WebsiteBuilderForBusinesses.API
             builder.Services.AddScoped<IUsersService, UsersService>();
             builder.Services.AddScoped<IProjectsRepository, ProjectsRepository>();
             builder.Services.AddScoped<IProjectsService, ProjectsService>();
+            builder.Services.AddScoped<ITokensUserRepository, TokensUserRepository>();
+            builder.Services.AddScoped<ITokensUserService, TokensUserService>();
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>

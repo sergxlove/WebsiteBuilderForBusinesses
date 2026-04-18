@@ -13,5 +13,6 @@ namespace WebsiteBuilderForBusinesses.DataAccess.Postgres.Abstractions
         Task<int> UpdateRoleAsync(Users user, CancellationToken token);
         Task<List<ShortUserDto>> GetAllAsync(CancellationToken token);
         Task<int> DeleteAsync(Guid id, CancellationToken token);
+        Task<Guid> GetIdAsync(string login, CancellationToken token);
     }
 }
