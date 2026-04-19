@@ -29,7 +29,7 @@ The program requires Docker and .NET 10 runtime to run.
 3. Run the command in the directory: docker compose up -d
 4. Run the command in the directory: Get-Content "backupWebbuilder.sql" | docker exec -i webbuilder-db psql -U postgres -d db
 5. Open the WebsiteBuilderForBusinesses.API.exe file
-6. Go to http://localhost:5001
+6. Go to http://localhost:5000
 
 To stop the program, close the .exe executable file and run the command: docker compose down
 
