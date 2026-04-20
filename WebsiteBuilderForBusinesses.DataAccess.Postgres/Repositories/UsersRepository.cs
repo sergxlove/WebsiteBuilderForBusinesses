@@ -37,34 +37,23 @@ namespace WebsiteBuilderForBusinesses.DataAccess.Postgres.Repositories
 
         public async Task<bool> VerifyAsync(string login, string password)
         {
-            var user = await _context.Users
-                .FirstOrDefaultAsync(a => a.Login == login);
+            var user = await _context.Users.FirstOrDefaultAsync(a => a.Login == login);
             if (user == null) return false;
             return Users.VerifyPassword(password, user.HashPassword);
         }
 
         public async Task<bool> CheckAsync(string login, CancellationToken token)
         {
-            var user = await _context.Users
-                .FirstOrDefaultAsync(a => a.Login == login, token);
+            var user = await _context.Users.FirstOrDefaultAsync(a => a.Login == login, token);
             if (user is null) return false;
             return true;
         }
 
         public async Task<string> GetRoleAsync(string login, CancellationToken token)
         {
-            var user = await _context.Users
-                .FirstOrDefaultAsync(a => a.Login == login, token);
+            var user = await _context.Users.FirstOrDefaultAsync(a => a.Login == login, token);
             if (user is null) return "user";
             return user.Role;
-        }
-
-        public async Task<Guid> GetIdAsync(string login, CancellationToken token)
-        {
-            var user = await _context.Users
-                .FirstOrDefaultAsync(a => a.Login == login, token);
-            if(user is null) return Guid.Empty;
-            return user.Id;
         }
 
         public async Task<int> UpdatePasswordAsync(Users user, CancellationToken token)
