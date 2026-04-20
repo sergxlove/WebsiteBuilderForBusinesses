@@ -11,7 +11,6 @@ namespace WebsiteBuilderForBusinesses.DataAccess.Postgres
 
         public DbSet<UsersEntity> Users { get; set; }
         public DbSet<ProjectEntity> Projects { get; set; }
-        public DbSet<TokensUserEntity> TokensUser { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -22,7 +21,6 @@ namespace WebsiteBuilderForBusinesses.DataAccess.Postgres
         {
             modelBuilder.ApplyConfiguration(new UsersConfiguration());
             modelBuilder.ApplyConfiguration(new ProjectConfiguration());
-            modelBuilder.ApplyConfiguration(new TokensUserConfiguration());
             base.OnModelCreating(modelBuilder);
         }
     }

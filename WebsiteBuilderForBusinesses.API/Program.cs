@@ -33,7 +33,7 @@ namespace WebsiteBuilderForBusinesses.API
                 .Enrich.WithThreadId()
                 .WriteTo.Seq(
                     serverUrl: seqSetting["ServerUrl"]!,
-                    apiKey: seqSetting["ApiKey"])
+                    apiKey: seqSetting["ApiKey"]) 
                 .WriteTo.Console()
                 .CreateLogger();
             builder.Host.UseSerilog();
@@ -46,8 +46,6 @@ namespace WebsiteBuilderForBusinesses.API
             builder.Services.AddScoped<IUsersService, UsersService>();
             builder.Services.AddScoped<IProjectsRepository, ProjectsRepository>();
             builder.Services.AddScoped<IProjectsService, ProjectsService>();
-            builder.Services.AddScoped<ITokensUserRepository, TokensUserRepository>();
-            builder.Services.AddScoped<ITokensUserService, TokensUserService>();
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -69,7 +67,7 @@ namespace WebsiteBuilderForBusinesses.API
                     {
                         OnMessageReceived = context =>
                         {
-                            context.Token = context.Request.Cookies["access_token"];
+                            context.Token = context.Request.Cookies["jwt"];
                             return Task.CompletedTask;
                         }
                     };
@@ -134,7 +132,6 @@ namespace WebsiteBuilderForBusinesses.API
             app.UseStaticFiles();
             app.UseStatusCodePagesWithReExecute("/error/{0}");
             app.UseCors("AllowAll");
-            app.UseRouting();
             app.UseSwagger();
             app.UseSwaggerUI();
             app.UseAuthentication();
