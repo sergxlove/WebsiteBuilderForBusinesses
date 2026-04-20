@@ -47,45 +47,35 @@
                 document.body.appendChild(toast);
                 setTimeout(() => toast.remove(), 3000);
             }
-            function getUserInfoFromToken() {
-                // Пробуем получить access_token
+            function getEmailFromJwt() {
                 const cookies = document.cookie.split(';');
-                let accessToken = null;
-
+                let jwtToken = null;
                 for (let cookie of cookies) {
                     const [name, value] = cookie.trim().split('=');
-                    if (name === 'access_token') {
-                        accessToken = value;
+                    if (name === 'jwt') {
+                        jwtToken = value;
                         break;
                     }
                 }
-
-                if (!accessToken) {
-                    console.error('Access token not found');
+                if (!jwtToken) {
+                    console.error('JWT token not found');
                     return null;
                 }
-
                 try {
-                    // Декодируем JWT токен
-                    const parts = accessToken.split('.');
+                    const parts = jwtToken.split('.');
                     if (parts.length !== 3) {
                         console.error('Invalid JWT format');
                         return null;
                     }
-
                     const payload = JSON.parse(atob(parts[1]));
-
-                    // Пробуем получить email из разных полей
                     const email = payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress']
-                        || payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/email']
                         || payload['email']
                         || payload['Email']
                         || payload['unique_name']
                         || null;
-
                     return email;
                 } catch (error) {
-                    console.error('Error decoding token:', error);
+                    console.error('Error decoding JWT:', error);
                     return null;
                 }
             }
