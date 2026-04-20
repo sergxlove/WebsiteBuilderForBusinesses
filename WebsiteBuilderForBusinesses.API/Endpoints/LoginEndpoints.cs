@@ -53,8 +53,8 @@ namespace WebsiteBuilderForBusinesses.API.Endpoints
                     if (!string.IsNullOrEmpty(newTokenUser.Error))
                         return Results.BadRequest(newTokenUser.Error);
                     int result = await tokenService.UpdateAsync(newTokenUser.Value, token);
-                    if (result == 0) return
-                        Results.Unauthorized();
+                    //if (result == 0) 
+                    //    return Results.Unauthorized();
                     CookieOptions cookieOptions = new()
                     {
                         HttpOnly = true,

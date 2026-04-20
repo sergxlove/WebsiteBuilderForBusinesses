@@ -33,7 +33,7 @@ namespace WebsiteBuilderForBusinesses.API
                 .Enrich.WithThreadId()
                 .WriteTo.Seq(
                     serverUrl: seqSetting["ServerUrl"]!,
-                    apiKey: seqSetting["ApiKey"]) 
+                    apiKey: seqSetting["ApiKey"])
                 .WriteTo.Console()
                 .CreateLogger();
             builder.Host.UseSerilog();
@@ -69,7 +69,7 @@ namespace WebsiteBuilderForBusinesses.API
                     {
                         OnMessageReceived = context =>
                         {
-                            context.Token = context.Request.Cookies["jwt"];
+                            context.Token = context.Request.Cookies["access_token"];
                             return Task.CompletedTask;
                         }
                     };
@@ -134,6 +134,7 @@ namespace WebsiteBuilderForBusinesses.API
             app.UseStaticFiles();
             app.UseStatusCodePagesWithReExecute("/error/{0}");
             app.UseCors("AllowAll");
+            app.UseRouting();
             app.UseSwagger();
             app.UseSwaggerUI();
             app.UseAuthentication();
