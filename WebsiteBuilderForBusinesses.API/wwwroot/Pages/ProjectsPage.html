@@ -47,35 +47,45 @@
                 document.body.appendChild(toast);
                 setTimeout(() => toast.remove(), 3000);
             }
-            function getEmailFromJwt() {
+            function getUserInfoFromToken() {
+                // Пробуем получить access_token
                 const cookies = document.cookie.split(';');
-                let jwtToken = null;
+                let accessToken = null;
+
                 for (let cookie of cookies) {
                     const [name, value] = cookie.trim().split('=');
-                    if (name === 'jwt') {
-                        jwtToken = value;
+                    if (name === 'access_token') {
+                        accessToken = value;
                         break;
                     }
                 }
-                if (!jwtToken) {
-                    console.error('JWT token not found');
+
+                if (!accessToken) {
+                    console.error('Access token not found');
                     return null;
                 }
+
                 try {
-                    const parts = jwtToken.split('.');
+                    // Декодируем JWT токен
+                    const parts = accessToken.split('.');
                     if (parts.length !== 3) {
                         console.error('Invalid JWT format');
                         return null;
                     }
+
                     const payload = JSON.parse(atob(parts[1]));
+
+                    // Пробуем получить email из разных полей
                     const email = payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress']
+                        || payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/email']
                         || payload['email']
                         || payload['Email']
                         || payload['unique_name']
                         || null;
+
                     return email;
                 } catch (error) {
-                    console.error('Error decoding JWT:', error);
+                    console.error('Error decoding token:', error);
                     return null;
                 }
             }
