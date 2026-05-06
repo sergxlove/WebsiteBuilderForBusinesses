@@ -52,14 +52,13 @@ namespace WebsiteBuilderForBusinesses.DataAccess.Postgres.Repositories
         public async Task<string> GetRoleAsync(string login, CancellationToken token)
         {
             var user = await _context.Users.FirstOrDefaultAsync(a => a.Login == login, token);
-            if (user is null) return "user";
+            if (user is null) return string.Empty;
             return user.Role;
         }
 
         public async Task<int> UpdatePasswordAsync(Users user, CancellationToken token)
         {
             return await _context.Users
-                .AsNoTracking()
                 .Where(a => a.Login == user.Login)
                 .ExecuteUpdateAsync(a => a
                 .SetProperty(a => a.HashPassword, user.HashPassword), token);
@@ -68,7 +67,6 @@ namespace WebsiteBuilderForBusinesses.DataAccess.Postgres.Repositories
         public async Task<int> UpdateRoleAsync(Users user, CancellationToken token)
         {
             return await _context.Users
-                .AsNoTracking()
                 .Where(a => a.Login == user.Login)
                 .ExecuteUpdateAsync(a => a
                 .SetProperty(a => a.Role, user.Role), token);
@@ -90,7 +88,6 @@ namespace WebsiteBuilderForBusinesses.DataAccess.Postgres.Repositories
         public async Task<int> DeleteAsync(Guid id, CancellationToken token)
         {
             return await _context.Users
-                .AsNoTracking()
                 .Where(a => a.Id == id)
                 .ExecuteDeleteAsync(token);
         }

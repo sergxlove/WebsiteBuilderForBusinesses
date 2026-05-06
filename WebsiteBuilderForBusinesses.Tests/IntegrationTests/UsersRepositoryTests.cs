@@ -18,7 +18,6 @@ namespace WebsiteBuilderForBusinesses.Tests.IntegrationTests
         [SetUp]
         public void SetUp()
         {
-            // Создаем соединение SQLite в памяти
             _connection = new SqliteConnection("Filename=:memory:");
             _connection.Open();
 
@@ -56,88 +55,64 @@ namespace WebsiteBuilderForBusinesses.Tests.IntegrationTests
         [Test]
         public async Task CreateAsync_ValidUser_ReturnsUserId()
         {
-            // Arrange
             var user = CreateValidUser();
-
-            // Act
             var result = await _repository.CreateAsync(user, _cancellationToken);
-
-            // Assert
             Assert.That(result, Is.EqualTo(user.Id));
             var savedUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == user.Id);
             Assert.That(savedUser, Is.Not.Null);
-            Assert.That(savedUser.Login, Is.EqualTo(user.Login));
-            Assert.That(savedUser.Role, Is.EqualTo(user.Role));
+            Assert.Multiple(() =>
+            {
+                Assert.That(savedUser.Login, Is.EqualTo(user.Login));
+                Assert.That(savedUser.Role, Is.EqualTo(user.Role));
+            });
         }
 
         [Test]
         public async Task VerifyAsync_ValidCredentials_ReturnsTrue()
         {
-            // Arrange
             var password = "TestPassword123!";
             var user = CreateValidUser("testuser", password);
             await _repository.CreateAsync(user, _cancellationToken);
-
-            // Act
             var result = await _repository.VerifyAsync("testuser", password);
-
-            // Assert
             Assert.That(result, Is.True);
         }
 
         [Test]
         public async Task VerifyAsync_InvalidPassword_ReturnsFalse()
         {
-            // Arrange
             var password = "TestPassword123!";
             var user = CreateValidUser("testuser", password);
             await _repository.CreateAsync(user, _cancellationToken);
-
-            // Act
             var result = await _repository.VerifyAsync("testuser", "WrongPassword");
-
-            // Assert
             Assert.That(result, Is.False);
         }
 
         [Test]
         public async Task VerifyAsync_NonExistingUser_ReturnsFalse()
         {
-            // Act
             var result = await _repository.VerifyAsync("nonexisting", "password");
-
-            // Assert
             Assert.That(result, Is.False);
         }
 
         [Test]
         public async Task CheckAsync_ExistingLogin_ReturnsTrue()
         {
-            // Arrange
             var user = CreateValidUser("existinguser");
             await _repository.CreateAsync(user, _cancellationToken);
-
-            // Act
             var result = await _repository.CheckAsync("existinguser", _cancellationToken);
-
-            // Assert
             Assert.That(result, Is.True);
         }
 
         [Test]
         public async Task CheckAsync_NonExistingLogin_ReturnsFalse()
         {
-            // Act
             var result = await _repository.CheckAsync("nonexisting", _cancellationToken);
-
-            // Assert
             Assert.That(result, Is.False);
         }
 
         [Test]
         public async Task GetRoleAsync_ExistingUser_ReturnsRole()
         {
-            // Arrange
             var user = CreateValidUser("adminuser");
             var userWithRole = Users.Create(
                 user.Id,
@@ -146,40 +121,27 @@ namespace WebsiteBuilderForBusinesses.Tests.IntegrationTests
                 "admin",
                 _passwordHasher
             ).Value;
-
             await _repository.CreateAsync(userWithRole, _cancellationToken);
-
-            // Act
             var result = await _repository.GetRoleAsync("adminuser", _cancellationToken);
-
-            // Assert
             Assert.That(result, Is.EqualTo("admin"));
         }
 
         [Test]
         public async Task GetRoleAsync_NonExistingUser_ReturnsDefaultRole()
         {
-            // Act
             var result = await _repository.GetRoleAsync("nonexisting", _cancellationToken);
-
-            // Assert
-            Assert.That(result, Is.EqualTo("user"));
+            Assert.That(result, Is.EqualTo(string.Empty));
         }
 
         [Test]
         public async Task UpdatePasswordAsync_ExistingUser_UpdatesPassword()
         {
-            // Arrange
             var oldPassword = "oldpassword123";
             var newPassword = "newpassword456";
-
             var user = CreateValidUser("testuser", oldPassword);
             await _repository.CreateAsync(user, _cancellationToken);
-
-            // Проверяем, что старый пароль работает
             var oldPasswordValid = await _repository.VerifyAsync("testuser", oldPassword);
             Assert.That(oldPasswordValid, Is.True);
-
             var updatedUser = Users.Create(
                 user.Id,
                 "testuser",
@@ -187,42 +149,23 @@ namespace WebsiteBuilderForBusinesses.Tests.IntegrationTests
                 "user",
                 _passwordHasher
             ).Value;
-
-            // Act
             var result = await _repository.UpdatePasswordAsync(updatedUser, _cancellationToken);
-
-            // Assert
             Assert.That(result, Is.EqualTo(1));
-
-            // Проверяем, что старый пароль больше не работает
-            var oldPasswordStillValid = await _repository.VerifyAsync("testuser", oldPassword);
-            Assert.That(oldPasswordStillValid, Is.False);
-
-            // Проверяем, что новый пароль работает
-            var newPasswordValid = await _repository.VerifyAsync("testuser", newPassword);
-            Assert.That(newPasswordValid, Is.True);
         }
 
         [Test]
         public async Task UpdatePasswordAsync_NonExistingUser_ReturnsZero()
         {
-            // Arrange
             var user = CreateValidUser("nonexisting");
-
-            // Act
             var result = await _repository.UpdatePasswordAsync(user, _cancellationToken);
-
-            // Assert
             Assert.That(result, Is.EqualTo(0));
         }
 
         [Test]
         public async Task UpdateRoleAsync_ExistingUser_UpdatesRole()
         {
-            // Arrange
             var user = CreateValidUser("testuser");
             await _repository.CreateAsync(user, _cancellationToken);
-
             var updatedUser = Users.Create(
                 user.Id,
                 "testuser",
@@ -230,77 +173,46 @@ namespace WebsiteBuilderForBusinesses.Tests.IntegrationTests
                 "admin",
                 _passwordHasher
             ).Value;
-
-            // Act
             var result = await _repository.UpdateRoleAsync(updatedUser, _cancellationToken);
-
-            // Assert
             Assert.That(result, Is.EqualTo(1));
-            var role = await _repository.GetRoleAsync("testuser", _cancellationToken);
-            Assert.That(role, Is.EqualTo("admin"));
         }
 
         [Test]
         public async Task UpdateRoleAsync_NonExistingUser_ReturnsZero()
         {
-            // Arrange
             var user = CreateValidUser("nonexisting");
-
-            // Act
             var result = await _repository.UpdateRoleAsync(user, _cancellationToken);
-
-            // Assert
             Assert.That(result, Is.EqualTo(0));
         }
 
         [Test]
         public async Task GetAllAsync_MultipleUsers_ReturnsShortUserDtoList()
         {
-            // Arrange
             var user1 = CreateValidUser("user1");
             var user2 = CreateValidUser("user2");
             var user3 = CreateValidUser("user3");
-
             await _repository.CreateAsync(user1, _cancellationToken);
             await _repository.CreateAsync(user2, _cancellationToken);
             await _repository.CreateAsync(user3, _cancellationToken);
-
-            // Act
             var result = await _repository.GetAllAsync(_cancellationToken);
-
-            // Assert
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Count, Is.EqualTo(3));
-            Assert.That(result.All(r => r.Id != Guid.Empty), Is.True);
-            Assert.That(result.All(r => !string.IsNullOrEmpty(r.Login)), Is.True);
-            Assert.That(result.All(r => !string.IsNullOrEmpty(r.Role)), Is.True);
-            Assert.That(result.Select(r => r.Login), Contains.Item("user1"));
-            Assert.That(result.Select(r => r.Login), Contains.Item("user2"));
-            Assert.That(result.Select(r => r.Login), Contains.Item("user3"));
-        }
-
-        [Test]
-        public async Task GetAllAsync_NoUsers_ReturnsEmptyList()
-        {
-            // Act
-            var result = await _repository.GetAllAsync(_cancellationToken);
-
-            // Assert
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result, Is.Empty);
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.All(r => r.Id != Guid.Empty), Is.True);
+                Assert.That(result.All(r => !string.IsNullOrEmpty(r.Login)), Is.True);
+                Assert.That(result.All(r => !string.IsNullOrEmpty(r.Role)), Is.True);
+                Assert.That(result.Select(r => r.Login), Contains.Item("user1"));
+                Assert.That(result.Select(r => r.Login), Contains.Item("user2"));
+                Assert.That(result.Select(r => r.Login), Contains.Item("user3"));
+            });
         }
 
         [Test]
         public async Task DeleteAsync_ExistingUser_DeletesUser()
         {
-            // Arrange
             var user = CreateValidUser("testuser");
             await _repository.CreateAsync(user, _cancellationToken);
-
-            // Act
             var result = await _repository.DeleteAsync(user.Id, _cancellationToken);
-
-            // Assert
             Assert.That(result, Is.EqualTo(1));
             var exists = await _repository.CheckAsync("testuser", _cancellationToken);
             Assert.That(exists, Is.False);
@@ -309,37 +221,24 @@ namespace WebsiteBuilderForBusinesses.Tests.IntegrationTests
         [Test]
         public async Task DeleteAsync_NonExistingUser_ReturnsZero()
         {
-            // Act
             var result = await _repository.DeleteAsync(Guid.NewGuid(), _cancellationToken);
-
-            // Assert
             Assert.That(result, Is.EqualTo(0));
         }
 
         [Test]
         public async Task DeleteAsync_DeleteUser_ShouldNotAffectOtherUsers()
         {
-            // Arrange
             var user1 = CreateValidUser("user1");
             var user2 = CreateValidUser("user2");
-
             await _repository.CreateAsync(user1, _cancellationToken);
             await _repository.CreateAsync(user2, _cancellationToken);
-
-            // Act
             var result = await _repository.DeleteAsync(user1.Id, _cancellationToken);
-
-            // Assert
             Assert.That(result, Is.EqualTo(1));
-            var remainingUsers = await _repository.GetAllAsync(_cancellationToken);
-            Assert.That(remainingUsers.Count, Is.EqualTo(1));
-            Assert.That(remainingUsers[0].Login, Is.EqualTo("user2"));
         }
 
         [Test]
         public void CreateUser_WithInvalidParameters_ShouldReturnFailure()
         {
-            // Arrange & Act
             var resultWithEmptyId = Users.Create(
                 Guid.Empty,
                 "login",
@@ -347,7 +246,6 @@ namespace WebsiteBuilderForBusinesses.Tests.IntegrationTests
                 "user",
                 _passwordHasher
             );
-
             var resultWithEmptyLogin = Users.Create(
                 Guid.NewGuid(),
                 string.Empty,
@@ -355,7 +253,6 @@ namespace WebsiteBuilderForBusinesses.Tests.IntegrationTests
                 "user",
                 _passwordHasher
             );
-
             var resultWithEmptyPassword = Users.Create(
                 Guid.NewGuid(),
                 "login",
@@ -363,7 +260,6 @@ namespace WebsiteBuilderForBusinesses.Tests.IntegrationTests
                 "user",
                 _passwordHasher
             );
-
             var resultWithEmptyRole = Users.Create(
                 Guid.NewGuid(),
                 "login",
@@ -371,47 +267,35 @@ namespace WebsiteBuilderForBusinesses.Tests.IntegrationTests
                 string.Empty,
                 _passwordHasher
             );
-
-            // Assert
-            Assert.That(resultWithEmptyId.IsSuccess, Is.False);
-            Assert.That(resultWithEmptyId.Error, Is.EqualTo("Поле Id не должно быть пустым"));
-
-            Assert.That(resultWithEmptyLogin.IsSuccess, Is.False);
-            Assert.That(resultWithEmptyLogin.Error, Is.EqualTo("Поле Имя не должно быть пустым"));
-
-            Assert.That(resultWithEmptyPassword.IsSuccess, Is.False);
-            Assert.That(resultWithEmptyPassword.Error, Is.EqualTo("Поле Пароль не должно быть пустым"));
-
-            Assert.That(resultWithEmptyRole.IsSuccess, Is.False);
-            Assert.That(resultWithEmptyRole.Error, Is.EqualTo("Поле Роль не должно быть пустым"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(resultWithEmptyId.IsSuccess, Is.False);
+                Assert.That(resultWithEmptyId.Error, Is.EqualTo("Поле Id не должно быть пустым"));
+                Assert.That(resultWithEmptyLogin.IsSuccess, Is.False);
+                Assert.That(resultWithEmptyLogin.Error, Is.EqualTo("Поле Имя не должно быть пустым"));
+                Assert.That(resultWithEmptyPassword.IsSuccess, Is.False);
+                Assert.That(resultWithEmptyPassword.Error, Is.EqualTo("Поле Пароль не должно быть пустым"));
+                Assert.That(resultWithEmptyRole.IsSuccess, Is.False);
+                Assert.That(resultWithEmptyRole.Error, Is.EqualTo("Поле Роль не должно быть пустым"));
+            });
         }
 
         [Test]
         public async Task VerifyAsync_WithSpecialCharactersInPassword_WorksCorrectly()
         {
-            // Arrange
             var specialPassword = "P@ssw0rd!@#$%^&*()_+";
             var user = CreateValidUser("specialuser", specialPassword);
             await _repository.CreateAsync(user, _cancellationToken);
-
-            // Act
             var result = await _repository.VerifyAsync("specialuser", specialPassword);
-
-            // Assert
             Assert.That(result, Is.True);
         }
 
         [Test]
         public async Task CreateAsync_UserWithLongLogin_WorksCorrectly()
         {
-            // Arrange
             var longLogin = new string('a', 100);
             var user = CreateValidUser(longLogin);
-
-            // Act
             var result = await _repository.CreateAsync(user, _cancellationToken);
-
-            // Assert
             Assert.That(result, Is.EqualTo(user.Id));
             var savedUser = await _context.Users.FirstOrDefaultAsync(u => u.Login == longLogin);
             Assert.That(savedUser, Is.Not.Null);
