@@ -19,7 +19,7 @@ using WebsiteBuilderForBusinesses.DataAccess.Postgres.Repositories;
 
 namespace WebsiteBuilderForBusinesses.API
 {
-    public class Program
+    public partial class Program
     {
         public static void Main(string[] args)
         {

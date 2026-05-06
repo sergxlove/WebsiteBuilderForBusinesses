@@ -6,10 +6,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
+	<PreserveCompilationContext>true</PreserveCompilationContext>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.7" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.0" />
@@ -19,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\WebsiteBuilderForBusinesses.API\WebsiteBuilderForBusinesses.API.csproj" />
     <ProjectReference Include="..\WebsiteBuilderForBusinesses.Core\WebsiteBuilderForBusinesses.Core.csproj" />
     <ProjectReference Include="..\WebsiteBuilderForBusinesses.DataAccess.Postgres\WebsiteBuilderForBusinesses.DataAccess.Postgres.csproj" />
   </ItemGroup>
