@@ -7,6 +7,21 @@
 ![Static Badge](https://img.shields.io/badge/developer-sergxlove-green)
 ![Static Badge](https://img.shields.io/badge/year-2026-green)
 
+## Stack
+
+![Static Badge](https://img.shields.io/badge/language-C%23-red)
+![Static Badge](https://img.shields.io/badge/language-HTML-red)
+![Static Badge](https://img.shields.io/badge/language-CSS-red)
+![Static Badge](https://img.shields.io/badge/language-JavaScript-red)
+![Static Badge](https://img.shields.io/badge/framework-ASP.NET-blue)
+![Static Badge](https://img.shields.io/badge/framework-Entity_Framework-blue)
+![Static Badge](https://img.shields.io/badge/framework-Serilog-blue)
+![Static Badge](https://img.shields.io/badge/framework-NUnit-blue)
+![Static Badge](https://img.shields.io/badge/services-PostgreSQL-orange)
+![Static Badge](https://img.shields.io/badge/services-SQLite-orange)
+![Static Badge](https://img.shields.io/badge/services-Seq-orange)
+![Static Badge](https://img.shields.io/badge/services-Docker-orange)
+
 ## About
 
 WebsiteBuilderForBusinesses is an ASP.NET Core web application that provides an intuitive website builder with a block-based structure, drag-and-drop editor, and real-time preview. The platform allows users to quickly create landing pages and multi-page websites without programming knowledge using pre-built templates and a flexible component system, while supporting the export of pure HTML/CSS, publishing to their own hosting, and integrating with popular services through a simple and extensible interface.
